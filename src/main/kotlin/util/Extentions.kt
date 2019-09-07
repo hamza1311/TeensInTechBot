@@ -1,8 +1,7 @@
 package util
 
-import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 
@@ -22,3 +21,15 @@ fun MessageChannel.startTyping() = sendTyping().queue()
 
 val Message.content
     get() = this.contentRaw.split(" ")[1]
+
+fun jda(token: String, block: JDABuilder.() -> SelfUser): SelfUser {
+    return JDABuilder(token).block()
+}
+
+var JDABuilder.eventListeners
+    get() = arrayOf<Any>()
+    set(value) = this.addEventListeners(*value).run { Unit }
+
+var JDABuilder.activity
+    get() = Activity.listening("none")
+    set(value) = this.setActivity(value).run { Unit }
