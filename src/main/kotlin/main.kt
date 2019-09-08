@@ -1,3 +1,4 @@
+import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.SelfUser
 
@@ -8,6 +9,18 @@ private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 private lateinit var bot: SelfUser
 
 fun main() {
+
+    val template = parseCommandTemplate("send ?in")
+    println("template: $template")
+
+    val input = "send lucy hello"
+    println("input: $input")
+
+    val call = parseCommandString(input)
+    println("call: $call")
+
+    val data = commandDataFromCall(call, template)
+    println("data: $data")
 
     commands {
 

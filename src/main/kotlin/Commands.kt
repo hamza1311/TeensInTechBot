@@ -3,7 +3,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.*
 import java.awt.Color
 
-fun ping(event: MessageReceivedEvent) {
+fun ping(data: CommandData, event: MessageReceivedEvent) {
     val message = event.message
     message.channel.startTyping()
     Thread.sleep(1000)
@@ -11,12 +11,12 @@ fun ping(event: MessageReceivedEvent) {
 
 }
 
-fun say(event: MessageReceivedEvent) {
+fun say(data: CommandData, event: MessageReceivedEvent) {
     val message = event.message
     message.reply(message.content)
 }
 
-fun help(event: MessageReceivedEvent) {
+fun help(data: CommandData, event: MessageReceivedEvent) {
     val message = event.message
     val embedBuilder = EmbedBuilder().apply {
         setTitle("title")
