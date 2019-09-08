@@ -6,10 +6,9 @@ import util.*
 
 private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 
-public lateinit var bot: SelfUser
+lateinit var bot: SelfUser
 
 fun main() {
-
     val template = parseCommandTemplate("send ?in")
     println("template: $template")
 
@@ -24,15 +23,17 @@ fun main() {
 
     commands {
 
-        command("say !message",  ::say)
-        command("ping",          ::ping)
-        command("help",          ::help)
+        command("say !message", ::say)
+        command("save !message", ::save)
+        command("get", ::getSaved)
+        command("ping", ::ping)
+        command("help", ::help)
 
     }
 
     bot = jda(BOT_TOKEN) {
         eventListeners = arrayOf(CommandProxy.handler)
-        activity       = Activity.playing("!ping")
+        activity = Activity.playing("!ping")
         build().awaitReady().selfUser
     }
 }
