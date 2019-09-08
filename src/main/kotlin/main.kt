@@ -6,7 +6,7 @@ import util.*
 
 private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 
-private lateinit var bot: SelfUser
+public lateinit var bot: SelfUser
 
 fun main() {
 
@@ -24,9 +24,9 @@ fun main() {
 
     commands {
 
-        command("say",  ::say)
-        command("ping", ::ping)
-        command("help", ::help)
+        command("say !message",  ::say)
+        command("ping",          ::ping)
+        command("help",          ::help)
 
     }
 

@@ -13,7 +13,7 @@ fun ping(data: CommandData, event: MessageReceivedEvent) {
 
 fun say(data: CommandData, event: MessageReceivedEvent) {
     val message = event.message
-    message.reply(message.content)
+    message.reply(data.argsContent.getOrElse("message") { "idk" })
 }
 
 fun help(data: CommandData, event: MessageReceivedEvent) {
