@@ -18,7 +18,9 @@ object CommandProxy {
         override fun onMessageReceived(ev: MessageReceivedEvent) {
             val cmdString = ev.message.contentRaw
 
-            if (!cmdString.startsWith(BOT_PREFIX) || ev.message.author == bot) return
+            if (!cmdString.startsWith(BOT_PREFIX) ||
+                ev.message.author.idLong == bot.selfUser.idLong
+            ) return
 
             val call = parseCommandString(cmdString)
             val selectedCommand = registeredCommands.firstOrNull { it.template.name == call.name }

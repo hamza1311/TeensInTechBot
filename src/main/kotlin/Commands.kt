@@ -1,8 +1,10 @@
+import dbshit.Ban
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import services.Save
-import services.Service
+import dbshit.Save
+import dbshit.Service
 import util.*
 import java.awt.Color
 
@@ -12,6 +14,63 @@ fun ping(data: CommandData, event: MessageReceivedEvent) {
     Thread.sleep(1000)
     message.reply("Pong")
 
+}
+
+fun kick(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    if (event.member?.hasPermission(Permission.KICK_MEMBERS) == true) {
+        val mentioned = message.mentionedMembers.first()
+        val reason = data.argsContent["reason"]
+        val embed = EmbedBuilder().apply {
+            setTitle("You have been kicked from ${message.guild.name}")
+            addField("Kicked by:", event.author.name, false)
+            if (reason != null) addField("Reason", reason, false)
+            setColor(Color.RED)
+        }.build()
+
+        message.reply(EmbedBuilder().apply {
+            setTitle("User ${mentioned.user.name} has been kicked")
+            addField("Kicked by:", event.author.name, false)
+            if (reason != null) addField("Reason", reason, false)
+            setColor(Color.RED)
+
+        }.build())
+
+        mentioned.user.openPrivateChannel().queue {
+            it.sendMessage(embed).queue {
+                mentioned.kick(reason).queue()
+            }
+        }
+    }
+}
+
+fun ban(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    if (event.member?.hasPermission(Permission.BAN_MEMBERS) == true) {
+        val mentioned = message.mentionedMembers.first()
+        val reason = data.argsContent["reason"]
+        val embed = EmbedBuilder().apply {
+            setTitle("You have been banned from ${message.guild.name}")
+            addField("Banned by:", event.author.name, false)
+            if (reason != null) addField("Reason", reason, false)
+            setColor(Color.RED)
+        }.build()
+
+        message.reply(EmbedBuilder().apply {
+            setTitle("User ${mentioned.user.name} has been banned")
+            addField("Banned by:", event.author.name, false)
+            if (reason != null) addField("Reason", reason, false)
+            setColor(Color.RED)
+        }.build())
+
+        mentioned.user.openPrivateChannel().queue {
+            it.sendMessage(embed).queue {
+                mentioned.ban(0, reason).queue()
+            }
+        }
+    }
 }
 
 fun say(data: CommandData, event: MessageReceivedEvent) {

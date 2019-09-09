@@ -1,5 +1,6 @@
 package util
 
+import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -22,7 +23,7 @@ fun MessageChannel.startTyping() = sendTyping().queue()
 val Message.content
     get() = this.contentRaw.split(" ")[1]
 
-fun jda(token: String, block: JDABuilder.() -> SelfUser): SelfUser {
+fun jda(token: String, block: JDABuilder.() -> JDA): JDA {
     return JDABuilder(token).block()
 }
 

@@ -1,3 +1,4 @@
+import net.dv8tion.jda.api.JDA
 import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.SelfUser
@@ -6,7 +7,7 @@ import util.*
 
 private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 
-lateinit var bot: SelfUser
+lateinit var bot: JDA
 
 fun main() {
     val template = parseCommandTemplate("send ?in")
@@ -28,12 +29,14 @@ fun main() {
         command("get", ::getSaved)
         command("ping", ::ping)
         command("help", ::help)
+        command("ban !user ?reason", ::ban)
+        command("kick !user ?reason", ::kick)
 
     }
 
     bot = jda(BOT_TOKEN) {
         eventListeners = arrayOf(CommandProxy.handler)
         activity = Activity.playing("!ping")
-        build().awaitReady().selfUser
+        build().awaitReady()
     }
 }
