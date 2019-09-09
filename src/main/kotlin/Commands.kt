@@ -1,11 +1,8 @@
-import dbshit.Ban
+import dbshit.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import dbshit.Save
-import dbshit.Service
-import org.litote.kmongo.set
 import util.*
 import java.awt.Color
 
@@ -40,7 +37,17 @@ fun kick(data: CommandData, event: MessageReceivedEvent) {
 
         mentioned.user.openPrivateChannel().queue {
             it.sendMessage(embed).queue {
-                mentioned.kick(reason).queue()
+                mentioned.kick(reason).queue {
+                    runBlocking {
+                        Service.insertKickedUser(
+                            Kick(
+                                user = mentioned.user.idLong,
+                                kickedBy = event.author.idLong,
+                                reason = reason ?: ""
+                            )
+                        )
+                    }
+                }
             }
         }
     }
@@ -72,12 +79,48 @@ fun ban(data: CommandData, event: MessageReceivedEvent) {
                     runBlocking {
                         Service.insertBannedUser(
                             Ban(
-                                username = mentioned.user.name,
+                                user = mentioned.user.idLong,
                                 bannedBy = event.author.idLong,
                                 reason = reason ?: ""
                             )
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+fun warn(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    if (event.member?.hasPermission(Permission.MESSAGE_MANAGE) == true) {
+        val mentioned = message.mentionedMembers.first()
+        val reason = data.argsContent["reason"]
+        val embed = EmbedBuilder().apply {
+            setTitle("You were warned in ${message.guild.name}")
+            addField("Warned by:", event.author.name, false)
+            addField("Reason", reason, false)
+            setColor(Color.RED)
+        }.build()
+
+        message.reply(EmbedBuilder().apply {
+            setTitle("User ${mentioned.user.name} was warned")
+            setFooter("Warned by: ${event.author.name}")
+            addField("Reason", reason, false)
+            setColor(Color.RED)
+        }.build())
+
+        mentioned.user.openPrivateChannel().queue {
+            it.sendMessage(embed).queue {
+                runBlocking {
+                    Service.warnUser(
+                        Warning(
+                            user = mentioned.user.idLong,
+                            warnedBy = event.author.idLong,
+                            reason = reason ?: ""
+                        )
+                    )
                 }
             }
         }
@@ -92,12 +135,51 @@ fun bans(data: CommandData, event: MessageReceivedEvent) {
         Service.getAllBannedUsers().forEachIndexed { index, it ->
             builder.apply {
                 addField(
-                    "$index. User: ${it.username}",
-                    "Reason ${it.reason}\nBanned by: ${bot.getUserById(it.bannedBy)?.name}",
+                    "${index + 1}. User: ${bot.getUserById(it.user)?.name}",
+                    "Reason: ${it.reason}\nBanned by: ${bot.getUserById(it.bannedBy)?.name}",
                     false
                 )
             }
         }
+        builder.build()
+    }
+    message.reply(bannedUsersEmbed)
+}
+
+fun kicks(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    val bannedUsersEmbed = runBlocking {
+        val builder = EmbedBuilder().setTitle("Kicked users")
+        Service.getAllKickedUsers().forEachIndexed { index, it ->
+            builder.apply {
+                addField(
+                    "${index + 1}. User: ${bot.getUserById(it.user)?.name}",
+                    "Reason: ${it.reason}\nKicked by: ${bot.getUserById(it.kickedBy)?.name}",
+                    false
+                )
+            }
+        }
+        builder.build()
+    }
+    message.reply(bannedUsersEmbed)
+}
+
+fun wantings(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    val bannedUsersEmbed = runBlocking {
+        val builder = EmbedBuilder().setTitle("Warnings for user")
+        Service.getWarningForUser(message.mentionedMembers.first().idLong)
+            .forEachIndexed { index, it ->
+                builder.apply {
+                    addField(
+                        "Warning ${index + 1}:",
+                        "Reason: ${it.reason}\nWarned by: ${bot.getUserById(it.warnedBy)?.name}",
+                        false
+                    )
+                }
+            }
         builder.build()
     }
     message.reply(bannedUsersEmbed)

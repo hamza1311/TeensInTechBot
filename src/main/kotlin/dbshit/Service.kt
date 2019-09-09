@@ -11,6 +11,8 @@ object Service {
     private val database = client.getDatabase("test")
     private val collection = database.getCollection<Save>()
     private val bannedUserCollection = database.getCollection<Ban>()
+    private val kickedUserCollection = database.getCollection<Kick>()
+    private val warningsCollection = database.getCollection<Warning>()
 
 
     suspend fun insert(save: Save) {
@@ -27,5 +29,21 @@ object Service {
 
     suspend fun getAllBannedUsers(): List<Ban> {
         return bannedUserCollection.find().toList()
+    }
+
+    suspend fun insertKickedUser(banned: Kick) {
+        kickedUserCollection.insertOne(banned)
+    }
+
+    suspend fun getAllKickedUsers(): List<Kick> {
+        return kickedUserCollection.find().toList()
+    }
+
+    suspend fun warnUser(warn: Warning) {
+        warningsCollection.insertOne(warn)
+    }
+
+    suspend fun getWarningForUser(user: Long): List<Warning> {
+        return warningsCollection.find(Warning::user eq user).toList()
     }
 }

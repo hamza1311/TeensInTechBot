@@ -1,7 +1,6 @@
 import net.dv8tion.jda.api.JDA
 import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.entities.SelfUser
 
 import util.*
 
@@ -29,9 +28,12 @@ fun main() {
         command("get", ::getSaved)
         command("ping", ::ping)
         command("bans", ::bans)
+        command("kicks", ::kicks)
+        command("warnings", ::wantings)
         command("help", ::help)
         command("ban !user ?reason", ::ban)
         command("kick !user ?reason", ::kick)
+        command("warn !user !reason", ::warn)
 
     }
 
