@@ -1,13 +1,18 @@
 package util
 
 import bot
+import commands.models.BotCommand
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 import java.awt.Color
 
-class Command(val template: CommandTemplate, val block: (CommandData, MessageReceivedEvent) -> Unit)
+class Command(
+    val template: CommandTemplate,
+    val block: (CommandData, MessageReceivedEvent) -> Unit,
+    val helpMessage: String
+)
 
 object CommandProxy {
 
@@ -48,6 +53,10 @@ object CommandProxy {
 
 fun commands(block: CommandProxy.() -> Unit) = CommandProxy.block()
 
-fun CommandProxy.command(commandString: String, block: (CommandData, MessageReceivedEvent) -> Unit) {
-    this.registeredCommands += Command(parseCommandTemplate(commandString), block)
+//fun CommandProxy.command(commandString: String, block: (CommandData, MessageReceivedEvent) -> Unit) {
+fun CommandProxy.command(botCommand: BotCommand) {
+    println("help ${botCommand.help}")
+    this.registeredCommands += Command(parseCommandTemplate(botCommand.commandString), botCommand::command, botCommand.help).also {
+        println(it.helpMessage)
+    }
 }

@@ -1,3 +1,4 @@
+import commands.*
 import net.dv8tion.jda.api.JDA
 import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
@@ -22,19 +23,16 @@ fun main() {
     println("data: $data")
 
     commands {
-
-        command("say !message", ::say)
-        command("save !message", ::save)
-        command("get", ::getSaved)
-        command("ping", ::ping)
-        command("bans", ::bans)
-        command("kicks", ::kicks)
-        command("warnings", ::wantings)
-        command("help", ::help)
-        command("ban !user ?reason", ::ban)
-        command("kick !user ?reason", ::kick)
-        command("warn !user !reason", ::warn)
-
+        command(Ping)
+        command(Save)
+        command(GetSaved)
+        command(Ban)
+        command(Bans)
+        command(Kick)
+        command(Kicks)
+        command(Warn)
+        command(Warnings)
+        command(Help)
     }
 
     bot = jda(BOT_TOKEN) {
