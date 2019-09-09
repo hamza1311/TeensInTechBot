@@ -1,4 +1,4 @@
-package services
+package dbshit
 
 import org.litote.kmongo.reactivestreams.*
 import org.litote.kmongo.coroutine.*
@@ -10,6 +10,8 @@ object Service {
     private val client = KMongo.createClient("mongodb://user:pass@127.0.0.1:27017/test").coroutine
     private val database = client.getDatabase("test")
     private val collection = database.getCollection<Save>()
+    private val bannedUserCollection = database.getCollection<Ban>()
+
 
     suspend fun insert(save: Save) {
         collection.insertOne(save)
@@ -17,5 +19,13 @@ object Service {
 
     suspend fun find(savedBy: Long): List<Save> {
         return collection.find(Save::savedBy eq savedBy).toList()
+    }
+
+    suspend fun insertBannedUser(banned: Ban) {
+        bannedUserCollection.insertOne(banned)
+    }
+
+    suspend fun getAllBannedUsers(): List<Ban> {
+        return bannedUserCollection.find().toList()
     }
 }

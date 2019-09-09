@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import dbshit.Save
 import dbshit.Service
+import org.litote.kmongo.set
 import util.*
 import java.awt.Color
 
@@ -67,10 +68,39 @@ fun ban(data: CommandData, event: MessageReceivedEvent) {
 
         mentioned.user.openPrivateChannel().queue {
             it.sendMessage(embed).queue {
-                mentioned.ban(0, reason).queue()
+                mentioned.ban(0, reason).queue {
+                    runBlocking {
+                        Service.insertBannedUser(
+                            Ban(
+                                user = mentioned.idLong,
+                                bannedBy = event.author.idLong,
+                                reason = reason ?: ""
+                            )
+                        )
+                    }
+                }
             }
         }
     }
+}
+
+fun bans(data: CommandData, event: MessageReceivedEvent) {
+    val message = event.message
+    message.channel.startTyping()
+    val bannedUsersEmbed = runBlocking {
+        val builder = EmbedBuilder().setTitle("Banned users")
+        Service.getAllBannedUsers().forEachIndexed { index, it ->
+            builder.apply {
+                addField(
+                    "$index. User:  ${bot.getUserById(it.user)?.name}",
+                    "Reason ${it.reason}\nBanned by: ${bot.getUserById(it.bannedBy)?.name}",
+                    false
+                )
+            }
+        }
+        builder.build()
+    }
+    message.reply(bannedUsersEmbed)
 }
 
 fun say(data: CommandData, event: MessageReceivedEvent) {
