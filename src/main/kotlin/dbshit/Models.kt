@@ -1,3 +1,3 @@
 package dbshit
 
-data class Ban(val user: Long, val bannedBy: Long, val reason: String)
+data class Ban(val username: String, val bannedBy: Long, val reason: String)

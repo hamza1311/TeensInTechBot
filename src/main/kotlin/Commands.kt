@@ -72,7 +72,7 @@ fun ban(data: CommandData, event: MessageReceivedEvent) {
                     runBlocking {
                         Service.insertBannedUser(
                             Ban(
-                                user = mentioned.idLong,
+                                username = mentioned.user.name,
                                 bannedBy = event.author.idLong,
                                 reason = reason ?: ""
                             )
@@ -92,7 +92,7 @@ fun bans(data: CommandData, event: MessageReceivedEvent) {
         Service.getAllBannedUsers().forEachIndexed { index, it ->
             builder.apply {
                 addField(
-                    "$index. User:  ${bot.getUserById(it.user)?.name}",
+                    "$index. User: ${it.username}",
                     "Reason ${it.reason}\nBanned by: ${bot.getUserById(it.bannedBy)?.name}",
                     false
                 )

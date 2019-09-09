@@ -28,6 +28,7 @@ fun main() {
         command("save !message", ::save)
         command("get", ::getSaved)
         command("ping", ::ping)
+        command("bans", ::bans)
         command("help", ::help)
         command("ban !user ?reason", ::ban)
         command("kick !user ?reason", ::kick)
