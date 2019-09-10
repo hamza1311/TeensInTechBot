@@ -3,6 +3,7 @@ package util
 import bot
 import commands.models.BotCommand
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
@@ -37,7 +38,7 @@ object CommandProxy {
                     selectedCommand.block(data, ev)
                 } catch (e: Exception) {
                     ev.message.reply(EmbedBuilder().run {
-                        setTitle("An error occured while parsing/executing command ${selectedCommand.template.name}")
+                        setTitle("An error occurred while parsing/executing command ${selectedCommand.template.name}")
                         addField(e.javaClass.simpleName, e.message, false)
                         addField("Stacktrace", e.stackTrace.joinToString(" ").take(1023), false)
                         setColor(Color.RED)
@@ -45,6 +46,12 @@ object CommandProxy {
                     })
                 }
             } ?: ev.message.reply("unknown command \"${call.name}\"")
+        }
+
+        override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
+            event.guild.getTextChannelById(606236030261133438)?.sendMessage("Welcome to ${event.guild.name}!!!!!!")
+                ?.queue()
+            event.guild.getRoleById(610885740208849019)?.let { event.guild.addRoleToMember(event.member, it).queue() }
         }
 
     }
@@ -56,7 +63,11 @@ fun commands(block: CommandProxy.() -> Unit) = CommandProxy.block()
 //fun CommandProxy.command(commandString: String, block: (CommandData, MessageReceivedEvent) -> Unit) {
 fun CommandProxy.command(botCommand: BotCommand) {
     println("help ${botCommand.help}")
-    this.registeredCommands += Command(parseCommandTemplate(botCommand.commandString), botCommand::command, botCommand.help).also {
+    this.registeredCommands += Command(
+        parseCommandTemplate(botCommand.commandString),
+        botCommand::command,
+        botCommand.help
+    ).also {
         println(it.helpMessage)
     }
 }

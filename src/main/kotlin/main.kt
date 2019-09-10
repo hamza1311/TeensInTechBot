@@ -33,6 +33,9 @@ fun main() {
         command(Warn)
         command(Warnings)
         command(Help)
+        command(Help)
+        command(AssignRole)
+        command(Purge)
     }
 
     bot = jda(BOT_TOKEN) {
