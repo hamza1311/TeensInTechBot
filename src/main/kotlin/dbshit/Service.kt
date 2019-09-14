@@ -9,7 +9,7 @@ import org.litote.kmongo.eq
 data class Save(val data: String, val savedBy: Long)
 
 object Service {
-    private val client = KMongo.createClient("mongodb://user:pass@127.0.0.1:27017/test").coroutine
+    private val client = KMongo.createClient("mongodb://127.0.0.1:27017").coroutine
     private val database = client.getDatabase("test")
     private val collection = database.getCollection<Save>()
     private val bannedUserCollection = database.getCollection<Ban>()

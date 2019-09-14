@@ -1,11 +1,17 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    application
     kotlin("jvm") version "1.3.50"
 }
 
 group = "teensintech"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClassName = "MainKt"
+}
 
 repositories {
     mavenCentral()
@@ -21,4 +27,9 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+sourceSets["main"].java.srcDir("src/main/java")
+sourceSets["main"].withConvention(KotlinSourceSet::class) {
+    kotlin.srcDir("src/main/kotlin")
 }
