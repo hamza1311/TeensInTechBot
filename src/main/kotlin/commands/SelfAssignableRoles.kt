@@ -35,21 +35,13 @@ object AssignRole : BotCommand {
     override val commandString: String = "assignrole !role"
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
-        val role = runBlocking {
-            data.argsContent["role"]?.let { Service.getSelfAssignRoleByName(it) }
+        runBlocking {
+            val role = data.argsContent["role"]?.let { Service.getSelfAssignRoleByName(it) }
                 ?: error("role param is null")
-        }
-        println(role)
-        role.assignedTo.add(Role.User(event.author.name, event.author.idLong))
-        println(role)
-        event.message.reply(role.toString())
-        runBlocking { Service.updateAssignedRole(role) }
-        val guildRole = event.guild.getRoleById(role.id)
-        val member = event.member
-        if (member != null && guildRole != null) {
-            event.guild.addRoleToMember(member, guildRole).queue()
-        } else {
-            error("Either member or guildRole is null. epic bruh moment")
+            role.assignedTo.add(Role.User(event.author.name, event.author.idLong))
+            event.message.reply(role.toString())
+            Service.updateAssignedRole(role)
+            event.guild.addRoleToMember(event.member!!, event.guild.getRoleById(role.id)!!).queue()
         }
     }
 }
@@ -59,7 +51,14 @@ object RemoveRole : BotCommand {
     override val commandString: String = "removerole !role"
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
-
+        runBlocking {
+            val role = data.argsContent["role"]?.let { Service.getSelfAssignRoleByName(it) }
+                ?: error("role param is null")
+            role.assignedTo.removeIf { it.id == event.author.idLong }
+            Service.updateAssignedRole(role)
+            event.message.reply(role.toString())
+            event.guild.removeRoleFromMember(event.member!!, event.guild.getRoleById(role.id)!!).queue()
+        }
     }
 }
 
