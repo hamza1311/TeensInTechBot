@@ -1,5 +1,7 @@
 package dbshit
 
+import com.mongodb.client.result.UpdateResult
+import com.mongodb.reactivestreams.client.Success
 import org.litote.kmongo.reactivestreams.*
 import org.litote.kmongo.coroutine.*
 import org.litote.kmongo.eq
@@ -13,6 +15,7 @@ object Service {
     private val bannedUserCollection = database.getCollection<Ban>()
     private val kickedUserCollection = database.getCollection<Kick>()
     private val warningsCollection = database.getCollection<Warning>()
+    private val selfAssignRolesCollection = database.getCollection<Role>()
 
 
     suspend fun insert(save: Save) {
@@ -45,5 +48,22 @@ object Service {
 
     suspend fun getWarningForUser(user: Long): List<Warning> {
         return warningsCollection.find(Warning::user eq user).toList()
+    }
+
+    suspend fun addRole(role: Role): Success {
+        return selfAssignRolesCollection.insertOne(role)
+    }
+
+    suspend fun getAllSelfAssignRoles(): List<Role> {
+        return selfAssignRolesCollection.find().toList()
+    }
+
+    suspend fun getSelfAssignRoleByName(roleName: String): Role {
+        return selfAssignRolesCollection.find(Role::name eq roleName).toList().firstOrNull()
+            ?: error("More than 1 role with same name found")
+    }
+
+    suspend fun updateAssignedRole(role: Role): UpdateResult {
+        return selfAssignRolesCollection.updateOne(Role::id eq role.id, role)
     }
 }

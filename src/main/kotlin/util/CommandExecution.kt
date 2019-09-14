@@ -38,7 +38,7 @@ object CommandProxy {
                     selectedCommand.block(data, ev)
                 } catch (e: Exception) {
                     ev.message.reply(EmbedBuilder().run {
-                        setTitle("An error occurred while parsing/executing command ${selectedCommand.template.name}")
+                        setTitle("A bruh moment while parsing/executing command ${selectedCommand.template.name}")
                         addField(e.javaClass.simpleName, e.message, false)
                         addField("Stacktrace", e.stackTrace.joinToString(" ").take(1023), false)
                         setColor(Color.RED)
@@ -49,9 +49,9 @@ object CommandProxy {
         }
 
         override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-            event.guild.getTextChannelById(606236030261133438)?.sendMessage("Welcome to ${event.guild.name}!!!!!!")
+            event.guild.getTextChannelById(WELCOME_CHANNEL)?.sendMessage("Welcome to ${event.guild.name}!!!!!!")
                 ?.queue()
-            event.guild.getRoleById(610885740208849019)?.let { event.guild.addRoleToMember(event.member, it).queue() }
+            event.guild.getRoleById(MEMBER_ROLE)?.let { event.guild.addRoleToMember(event.member, it).queue() }
         }
 
     }
@@ -60,7 +60,6 @@ object CommandProxy {
 
 fun commands(block: CommandProxy.() -> Unit) = CommandProxy.block()
 
-//fun CommandProxy.command(commandString: String, block: (CommandData, MessageReceivedEvent) -> Unit) {
 fun CommandProxy.command(botCommand: BotCommand) {
     println("help ${botCommand.help}")
     this.registeredCommands += Command(

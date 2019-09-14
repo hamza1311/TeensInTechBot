@@ -1,3 +1,5 @@
 package util
 
 const val BOT_PREFIX = "!"
+const val WELCOME_CHANNEL = 606236030261133438
+const val MEMBER_ROLE = 610885740208849019

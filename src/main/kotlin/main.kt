@@ -34,8 +34,11 @@ fun main() {
         command(Warnings)
         command(Help)
         command(Help)
-        command(AssignRole)
         command(Purge)
+        command(Roles)
+        command(AssignRole)
+        command(RemoveRole)
+        command(AddSelfAssignRole)
     }
 
     bot = jda(BOT_TOKEN) {
