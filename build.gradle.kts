@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     kotlin("jvm") version "1.3.50"
+    id("com.github.johnrengelman.shadow") version "5.1.0"
+
 }
 
 group = "teensintech"
@@ -32,4 +34,23 @@ tasks.withType<KotlinCompile> {
 sourceSets["main"].java.srcDir("src/main/java")
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir("src/main/kotlin")
+}
+
+// Fat jar
+
+tasks.withType<Jar> {
+    destinationDirectory.set(File("./build/dist/jar"))
+
+    manifest {
+        attributes (
+            mapOf (
+                "Main-Class" to application.mainClassName
+            )
+        )
+    }
+
+}
+
+tasks.register("localDeploy", GradleBuild::class) {
+    tasks = mutableListOf("shadowJar")
 }

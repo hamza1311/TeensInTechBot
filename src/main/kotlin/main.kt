@@ -1,4 +1,6 @@
 import commands.*
+import dbshit.Service
+import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
 import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
@@ -10,6 +12,9 @@ private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 lateinit var bot: JDA
 
 fun main() {
+    runBlocking {
+        println(Service.find(529535587728752644L))
+    }
     val template = parseCommandTemplate("send ?in")
     println("template: $template")
 
