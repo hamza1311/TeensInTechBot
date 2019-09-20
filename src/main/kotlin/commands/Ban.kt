@@ -8,16 +8,16 @@ import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.requests.RestAction
-import net.dv8tion.jda.api.requests.restaction.AuditableRestAction
 import util.CommandData
 import util.reply
 import util.startTyping
 import java.awt.Color
+import java.util.*
+import kotlin.concurrent.schedule
 
 object Ban : BotCommand {
     override val help: String = "ban a fucker"
-    override val commandString: String = "ban !user ?reason"
+    override val commandString: String = "ban !user ?reason ?delayinmills"
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
@@ -42,7 +42,7 @@ object Ban : BotCommand {
             mentioned.user.openPrivateChannel().queue {
                 it.sendMessage(embed).queue {
 
-                    mentioned.ban(0, reason).queue {
+                    mentioned.ban(0, reason).queue { _ ->
                         runBlocking {
                             Service.insertBannedUser(
                                 Ban(
@@ -51,6 +51,11 @@ object Ban : BotCommand {
                                     reason = reason ?: ""
                                 )
                             )
+                        }
+                        data.argsContent["delayinmills"]?.let { delay ->
+                            Timer().schedule(delay.toLong()) {
+                                event.guild.unban(mentioned.id).queue()
+                            }
                         }
                     }
                 }
