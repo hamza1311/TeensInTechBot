@@ -2,6 +2,7 @@ package util
 
 import bot
 import commands.models.BotCommand
+import commands.models.Category
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -12,7 +13,8 @@ import java.awt.Color
 class Command(
     val template: CommandTemplate,
     val block: (CommandData, MessageReceivedEvent) -> Unit,
-    val helpMessage: String
+    val helpMessage: String,
+    val category: Category
 )
 
 object CommandProxy {
@@ -64,7 +66,8 @@ fun CommandProxy.command(botCommand: BotCommand) {
     this.registeredCommands += Command(
         parseCommandTemplate(botCommand.commandString),
         botCommand::command,
-        botCommand.help
+        botCommand.help,
+        botCommand.category
     )
 }
 
@@ -73,7 +76,8 @@ fun CommandProxy.commands(vararg botCommands: BotCommand) {
         this.registeredCommands += Command(
             parseCommandTemplate(it.commandString),
             it::command,
-            it.help
+            it.help,
+            it.category
         )
     }
 }

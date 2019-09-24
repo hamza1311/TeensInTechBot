@@ -2,6 +2,7 @@ package commands
 
 import bot
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Ban
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
@@ -18,6 +19,7 @@ import kotlin.concurrent.schedule
 object Ban : BotCommand {
     override val help: String = "ban a fucker"
     override val commandString: String = "ban !user ?reason ?delayinmills"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
@@ -67,6 +69,7 @@ object Ban : BotCommand {
 object Bans : BotCommand {
     override val help: String = "get all bans by bot"
     override val commandString: String = "bans"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message

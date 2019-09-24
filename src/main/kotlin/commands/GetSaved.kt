@@ -1,6 +1,7 @@
 package commands
 
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.EmbedBuilder
@@ -14,6 +15,7 @@ import java.awt.Color
 object GetSaved : BotCommand {
     override val help: String = "get saved shit from db"
     override val commandString: String = "get"
+    override val category: Category = Category.SavingStuff
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message

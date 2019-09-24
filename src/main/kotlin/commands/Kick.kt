@@ -2,6 +2,7 @@ package commands
 
 import bot
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Kick
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,7 @@ import java.awt.Color
 object Kick: BotCommand {
     override val help: String = "kick a buddy"
     override val commandString: String = "kick !user ?reason"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
@@ -60,6 +62,7 @@ object Kick: BotCommand {
 object Kicks: BotCommand {
     override val help: String = "get all the kicks"
     override val commandString: String = "kicks"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message

@@ -1,6 +1,7 @@
 package commands
 
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Role
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
@@ -12,6 +13,7 @@ import util.reply
 object Roles : BotCommand {
     override val help: String = "Get all the self-assignable roles"
     override val commandString: String = "roles"
+    override val category: Category = Category.Roles
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val roles = runBlocking { Service.getAllSelfAssignRoles() }
@@ -33,6 +35,7 @@ object Roles : BotCommand {
 object AssignRole : BotCommand {
     override val help: String = "Give a self-assignable role"
     override val commandString: String = "assignrole !role"
+    override val category: Category = Category.Roles
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         runBlocking {
@@ -49,6 +52,7 @@ object AssignRole : BotCommand {
 object RemoveRole : BotCommand {
     override val help: String = "Remove a self-assignable role"
     override val commandString: String = "removerole !role"
+    override val category: Category = Category.Roles
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         runBlocking {
@@ -65,6 +69,7 @@ object RemoveRole : BotCommand {
 object AddSelfAssignRole : BotCommand {
     override val help: String = "Adds a new self-assignable role"
     override val commandString: String = "addrole !role"
+    override val category: Category = Category.Roles
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val mentionedRole = event.message.mentionedRoles.firstOrNull()

@@ -1,6 +1,7 @@
 package commands
 
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Save
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
@@ -13,6 +14,7 @@ import util.startTyping
 object Save: BotCommand {
     override val help: String = "save shit to db"
     override val commandString: String = "save !message"
+    override val category: Category = Category.SavingStuff
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message

@@ -2,6 +2,7 @@ package commands
 
 import bot
 import commands.models.BotCommand
+import commands.models.Category
 import dbshit.Service
 import dbshit.Warning
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,7 @@ import java.awt.Color
 object Warn : BotCommand {
     override val help: String = "warn user"
     override val commandString: String = "warn !user !reason"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
@@ -57,6 +59,7 @@ object Warn : BotCommand {
 object Warnings : BotCommand {
     override val help: String = "get warnings of a user"
     override val commandString: String = "warnings !user"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
@@ -82,6 +85,7 @@ object Warnings : BotCommand {
 object UnWarn : BotCommand {
     override val help: String = "Delete a warning"
     override val commandString: String = "unwarn !warningid"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         event.message.channel.startTyping()

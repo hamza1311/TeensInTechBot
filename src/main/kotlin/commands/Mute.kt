@@ -1,6 +1,7 @@
 package commands
 
 import commands.models.BotCommand
+import commands.models.Category
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.CommandData
@@ -10,6 +11,7 @@ import util.reply
 object Mute : BotCommand {
     override val help: String = "Mutes the mentioned user"
     override val commandString: String = "mute !user"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val mentioned = event.message.mentionedMembers.firstOrNull() ?: error("No user was mentioned")
@@ -29,6 +31,7 @@ object Mute : BotCommand {
 object UnMute : BotCommand {
     override val help: String = "Unmutes the mentioned user"
     override val commandString: String = "unmute !user"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val mentioned = event.message.mentionedMembers.firstOrNull() ?: error("No user was mentioned")

@@ -1,6 +1,7 @@
 package commands
 
 import commands.models.BotCommand
+import commands.models.Category
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.CommandData
@@ -9,8 +10,8 @@ import java.util.stream.Collectors
 
 object Purge : BotCommand {
     override val help: String = "Delete certain amount of messages"
-
     override val commandString: String = "purge !amount"
+    override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         if (event.member?.hasPermission(Permission.MESSAGE_MANAGE) == true) {
