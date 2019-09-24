@@ -1,9 +1,11 @@
-version: '2'
+version: '3.6'
 services:
   bot:
     build: .
     depends_on:
       - db
+    secrets:
+      - token
   db:
     image: mongo:latest
     ports:
@@ -13,3 +15,7 @@ services:
 
 volumes:
   db-data:
+
+secrets:
+  token:
+    file: ./token.txt
