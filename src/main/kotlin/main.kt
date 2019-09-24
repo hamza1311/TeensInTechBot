@@ -11,6 +11,7 @@ import java.io.File
 lateinit var bot: JDA
 
 fun main() {
+    println(MUTED_ROLE)
     commands {
         commands(Ban, Bans, Kick, Kicks, Warn, Warnings, UnWarn)
         commands(Purge, Roles, AssignRole, RemoveRole, AddSelfAssignRole, Mute, UnMute)
@@ -20,7 +21,7 @@ fun main() {
         command(Help)
     }
 
-    bot = jda(File("/run/secrets/token").readText()) {
+    bot = jda(File("/run/secrets/token").readText().trim()) {
         eventListeners = arrayOf(CommandProxy.handler)
         activity = Activity.playing("!ping")
         build().awaitReady()

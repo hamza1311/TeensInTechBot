@@ -4,6 +4,6 @@ RUN mkdir - p /usr/src/bot
 
 WORKDIR /usr/src/bot
 
-ADD build/dist/jar/TeensInTechBot-1.0-SNAPSHOT-all.jar .
+ADD build/dist/jar/TeensInTechBot-1.0-all.jar .
 
-CMD ["java", "-jar", "TeensInTechBot-1.0-SNAPSHOT-all.jar"]
+CMD ["java", "-jar", "TeensInTechBot-1.0-all.jar"]

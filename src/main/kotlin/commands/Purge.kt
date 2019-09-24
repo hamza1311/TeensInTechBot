@@ -1,8 +1,10 @@
 package commands
 
 import commands.models.BotCommand
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.CommandData
+import util.reply
 import java.util.stream.Collectors
 
 object Purge : BotCommand {
@@ -11,10 +13,16 @@ object Purge : BotCommand {
     override val commandString: String = "purge !amount"
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
-        val amount = data.argsContent["amount"]?.toLong() ?: 0L
-        val messages = event.channel.iterableHistory.stream().limit(amount).collect(Collectors.toList())
-        messages.forEach {
-            it.delete().queue()
+        if (event.member?.hasPermission(Permission.MESSAGE_MANAGE) == true) {
+            val amount = data.argsContent["amount"]?.toLong() ?: 0L
+            val messages = event.channel.iterableHistory.stream().limit(amount).collect(Collectors.toList())
+            messages.forEach {
+                it.delete().queue {
+                    event.message.reply("User ${event.author.asMention} deleted ${messages.size} messages")
+                }
+            }
+        } else {
+            event.message.reply("Bruh you ain't got the permission for it")
         }
     }
 }
