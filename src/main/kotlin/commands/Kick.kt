@@ -15,7 +15,7 @@ import util.startTyping
 import java.awt.Color
 
 object Kick: BotCommand {
-    override val help: String = "kick a buddy"
+    override val help: String = "Kick the mentioned user"
     override val commandString: String = "kick !user ?reason"
     override val category: Category = Category.Moderation
 
@@ -60,7 +60,7 @@ object Kick: BotCommand {
 }
 
 object Kicks: BotCommand {
-    override val help: String = "get all the kicks"
+    override val help: String = "Get all the kicks performed by me"
     override val commandString: String = "kicks"
     override val category: Category = Category.Moderation
 

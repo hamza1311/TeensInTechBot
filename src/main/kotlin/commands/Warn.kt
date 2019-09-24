@@ -15,7 +15,7 @@ import util.startTyping
 import java.awt.Color
 
 object Warn : BotCommand {
-    override val help: String = "warn user"
+    override val help: String = "Warns the mentioned user for given reason"
     override val commandString: String = "warn !user !reason"
     override val category: Category = Category.Moderation
 
@@ -57,7 +57,7 @@ object Warn : BotCommand {
 }
 
 object Warnings : BotCommand {
-    override val help: String = "get warnings of a user"
+    override val help: String = "Get warnings for the mentioned user"
     override val commandString: String = "warnings !user"
     override val category: Category = Category.Moderation
 
@@ -83,7 +83,7 @@ object Warnings : BotCommand {
 }
 
 object UnWarn : BotCommand {
-    override val help: String = "Delete a warning"
+    override val help: String = "Deletes a warning"
     override val commandString: String = "unwarn !warningid"
     override val category: Category = Category.Moderation
 

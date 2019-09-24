@@ -13,7 +13,7 @@ import java.awt.Color
 
 @Suppress("DuplicatedCode")
 object GetSaved : BotCommand {
-    override val help: String = "get saved shit from db"
+    override val help: String = "Get saved stuff for author"
     override val commandString: String = "get"
     override val category: Category = Category.SavingStuff
 

@@ -17,7 +17,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 object Ban : BotCommand {
-    override val help: String = "ban a fucker"
+    override val help: String = "Bans the mentioned user"
     override val commandString: String = "ban !user ?reason ?delayinmills"
     override val category: Category = Category.Moderation
 

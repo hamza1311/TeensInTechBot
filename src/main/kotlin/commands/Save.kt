@@ -12,7 +12,7 @@ import util.startTyping
 
 @Suppress("DuplicatedCode")
 object Save: BotCommand {
-    override val help: String = "save shit to db"
+    override val help: String = "Save stuff"
     override val commandString: String = "save !message"
     override val category: Category = Category.SavingStuff
 

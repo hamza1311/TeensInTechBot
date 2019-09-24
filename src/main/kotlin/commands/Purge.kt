@@ -9,7 +9,7 @@ import util.reply
 import java.util.stream.Collectors
 
 object Purge : BotCommand {
-    override val help: String = "Delete certain amount of messages"
+    override val help: String = "Delete the given amount of messages"
     override val commandString: String = "purge !amount"
     override val category: Category = Category.Moderation
 
