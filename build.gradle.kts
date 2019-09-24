@@ -5,11 +5,12 @@ plugins {
     application
     kotlin("jvm") version "1.3.50"
     id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("com.avast.gradle.docker-compose") version "0.9.4"
 
 }
 
 group = "teensintech"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 application {
     mainClassName = "MainKt"
@@ -51,6 +52,14 @@ tasks.withType<Jar> {
 
 }
 
-tasks.register("localDeploy", GradleBuild::class) {
-    tasks = mutableListOf("shadowJar")
+dockerCompose {
+    useComposeFiles = mutableListOf("./docker-compose.yml")
+
+    projectName = "TeensInTech"
+
+    stopContainers  = true
+}
+
+tasks.register("deploy", GradleBuild::class) {
+    tasks = mutableListOf("shadowJar", "composeUp")
 }
