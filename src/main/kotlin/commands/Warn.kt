@@ -13,7 +13,7 @@ import util.reply
 import util.startTyping
 import java.awt.Color
 
-object Warn: BotCommand {
+object Warn : BotCommand {
     override val help: String = "warn user"
     override val commandString: String = "warn !user !reason"
 
@@ -54,7 +54,7 @@ object Warn: BotCommand {
     }
 }
 
-object Warnings: BotCommand {
+object Warnings : BotCommand {
     override val help: String = "get warnings of a user"
     override val commandString: String = "warnings !user"
 
@@ -68,7 +68,7 @@ object Warnings: BotCommand {
                     builder.apply {
                         addField(
                             "Warning ${index + 1}:",
-                            "Reason: ${it.reason}\nWarned by: ${bot.getUserById(it.warnedBy)?.name}",
+                            "Reason: ${it.reason}\nWarned by: ${bot.getUserById(it.warnedBy)?.name}\nWarningId: ${it.id}",
                             false
                         )
                     }
@@ -76,5 +76,27 @@ object Warnings: BotCommand {
             builder.build()
         }
         message.reply(bannedUsersEmbed)
+    }
+}
+
+object UnWarn : BotCommand {
+    override val help: String = "Delete a warning"
+    override val commandString: String = "unwarn !warningid"
+
+    override fun command(data: CommandData, event: MessageReceivedEvent) {
+        event.message.channel.startTyping()
+        val warningId = data.argsContent["warningid"] ?: error("Warning ID is null")
+        runBlocking {
+            val warningToBeRemoved = Service.getWarningById(warningId)
+            val embedBuilder = EmbedBuilder().apply {
+                setTitle("Removed Warning")
+                addField("Warning reason", warningToBeRemoved?.reason, false)
+                addField("Warned user", "${bot.getUserById(warningToBeRemoved!!.user)?.name}", false)
+                setFooter("Successfully removed by: ${event.author.name}")
+            }
+            Service.removeWarning(warningId).also {
+                event.message.reply(embedBuilder.build())
+            }
+        }
     }
 }

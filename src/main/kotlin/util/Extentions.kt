@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import java.util.*
 
 
 fun MessageReceivedEvent.addCommand(command: String, callback: (MessageReceivedEvent) -> Unit): Boolean {
@@ -34,3 +35,5 @@ var JDABuilder.eventListeners
 var JDABuilder.activity
     get() = Activity.listening("none")
     set(value) = this.setActivity(value).run { Unit }
+
+fun String.toUUID(): UUID = UUID.fromString(this)

@@ -6,8 +6,8 @@ import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
 
 import util.*
+import java.io.File
 
-private val BOT_TOKEN = System.getenv("BOT_TOKEN")
 
 lateinit var bot: JDA
 
@@ -37,6 +37,7 @@ fun main() {
         command(Kicks)
         command(Warn)
         command(Warnings)
+        command(UnWarn)
         command(Help)
         command(Help)
         command(Purge)
@@ -44,9 +45,11 @@ fun main() {
         command(AssignRole)
         command(RemoveRole)
         command(AddSelfAssignRole)
+        command(Mute)
+        command(UnMute)
     }
 
-    bot = jda(BOT_TOKEN) {
+    bot = jda(File("/run/secrets/token").readText()) {
         eventListeners = arrayOf(CommandProxy.handler)
         activity = Activity.playing("!ping")
         build().awaitReady()

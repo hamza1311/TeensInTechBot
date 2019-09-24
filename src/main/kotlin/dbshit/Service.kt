@@ -1,16 +1,20 @@
 package dbshit
 
+import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
 import com.mongodb.reactivestreams.client.Success
 import org.litote.kmongo.reactivestreams.*
 import org.litote.kmongo.coroutine.*
 import org.litote.kmongo.eq
+import org.litote.kmongo.util.idValue
+import util.toUUID
+import java.util.*
 
 data class Save(val data: String, val savedBy: Long)
 
 object Service {
     private val client = KMongo.createClient("mongodb://db:27017").coroutine
-    private val database = client.getDatabase("test")
+    private val database = client.getDatabase("teensintech")
     private val collection = database.getCollection<Save>()
     private val bannedUserCollection = database.getCollection<Ban>()
     private val kickedUserCollection = database.getCollection<Kick>()
@@ -65,5 +69,13 @@ object Service {
 
     suspend fun updateAssignedRole(role: Role): UpdateResult {
         return selfAssignRolesCollection.updateOne(Role::id eq role.id, role)
+    }
+
+    suspend fun removeWarning(warningId: String): DeleteResult {
+        return warningsCollection.deleteOne(Warning::id eq warningId.toUUID())
+    }
+
+    suspend fun getWarningById(warningId: String): Warning? {
+        return warningsCollection.findOne(Warning::id eq warningId.toUUID())
     }
 }
