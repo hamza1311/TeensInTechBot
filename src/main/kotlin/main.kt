@@ -28,25 +28,12 @@ fun main() {
     println("data: $data")
 
     commands {
+        commands(Ban, Bans, Kick, Kicks, Warn, Warnings, UnWarn)
+        commands(Purge, Roles, AssignRole, RemoveRole, AddSelfAssignRole, Mute, UnMute)
         command(Ping)
         command(Save)
         command(GetSaved)
-        command(Ban)
-        command(Bans)
-        command(Kick)
-        command(Kicks)
-        command(Warn)
-        command(Warnings)
-        command(UnWarn)
         command(Help)
-        command(Help)
-        command(Purge)
-        command(Roles)
-        command(AssignRole)
-        command(RemoveRole)
-        command(AddSelfAssignRole)
-        command(Mute)
-        command(UnMute)
     }
 
     bot = jda(File("/run/secrets/token").readText()) {

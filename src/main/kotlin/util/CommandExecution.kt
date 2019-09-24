@@ -61,12 +61,19 @@ object CommandProxy {
 fun commands(block: CommandProxy.() -> Unit) = CommandProxy.block()
 
 fun CommandProxy.command(botCommand: BotCommand) {
-    println("help ${botCommand.help}")
     this.registeredCommands += Command(
         parseCommandTemplate(botCommand.commandString),
         botCommand::command,
         botCommand.help
-    ).also {
-        println(it.helpMessage)
+    )
+}
+
+fun CommandProxy.commands(vararg botCommands: BotCommand) {
+    botCommands.forEach {
+        this.registeredCommands += Command(
+            parseCommandTemplate(it.commandString),
+            it::command,
+            it.help
+        )
     }
 }
