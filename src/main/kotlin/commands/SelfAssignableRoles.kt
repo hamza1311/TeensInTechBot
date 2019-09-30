@@ -6,6 +6,7 @@ import dbshit.Role
 import dbshit.Service
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.CommandData
 import util.reply
@@ -42,9 +43,10 @@ object AssignRole : BotCommand {
             val role = data.argsContent["role"]?.let { Service.getSelfAssignRoleByName(it) }
                 ?: error("role param is null")
             role.assignedTo.add(Role.User(event.author.name, event.author.idLong))
-            event.message.reply(role.toString())
-            Service.updateAssignedRole(role)
-            event.guild.addRoleToMember(event.member!!, event.guild.getRoleById(role.id)!!).queue()
+            event.guild.addRoleToMember(event.member!!, event.guild.getRoleById(role.id)!!).queue().also {
+                Service.updateAssignedRole(role)
+                event.message.reply(role.toString())
+            }
         }
     }
 }
@@ -59,9 +61,10 @@ object RemoveRole : BotCommand {
             val role = data.argsContent["role"]?.let { Service.getSelfAssignRoleByName(it) }
                 ?: error("role param is null")
             role.assignedTo.removeIf { it.id == event.author.idLong }
-            Service.updateAssignedRole(role)
-            event.message.reply(role.toString())
-            event.guild.removeRoleFromMember(event.member!!, event.guild.getRoleById(role.id)!!).queue()
+            event.guild.removeRoleFromMember(event.member!!, event.guild.getRoleById(role.id)!!).queue().also {
+                Service.updateAssignedRole(role)
+                event.message.reply(role.toString())
+            }
         }
     }
 }
@@ -72,15 +75,25 @@ object AddSelfAssignRole : BotCommand {
     override val category: Category = Category.Roles
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
+        if (event.member?.hasPermission(Permission.MANAGE_ROLES) != true) {
+            event.message.reply("You don't have the permissions to do that.")
+            return
+        }
+
         val mentionedRole = event.message.mentionedRoles.firstOrNull()
-            ?: error("More than one role mentioned role found")
+            ?: event.guild.getRoleById(data.argsContent["role"]?.toLong() ?: error ("param is null"))
+            ?: error("Invalid params given")
+
         val role = Role(mentionedRole.name, mentionedRole.idLong, mutableSetOf())
+
         runBlocking { Service.addRole(role) }
+
         event.message.reply(EmbedBuilder().apply {
             setTitle("Successfully added self-assignable role")
             addField("Role name: ", role.name, false)
             addField("Role id: ", "${role.id}", false)
             setFooter("Added by: ${event.author.name}")
         }.build())
+
     }
 }

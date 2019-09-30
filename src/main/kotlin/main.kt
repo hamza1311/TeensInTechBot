@@ -1,8 +1,5 @@
 import commands.*
-import dbshit.Service
-import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
-import util.parseCommandTemplate
 import net.dv8tion.jda.api.entities.Activity
 
 import util.*
@@ -14,9 +11,9 @@ fun main() {
     commands {
         commands(Ban, Bans, Kick, Kicks, Warn, Warnings, UnWarn)
         commands(Purge, Roles, AssignRole, RemoveRole, AddSelfAssignRole, Mute, UnMute)
-        command(Ping)
-        command(Save)
-        command(GetSaved)
+        commands(Nickname, ActivityStatus)
+        commands(Save, GetSaved)
+        commands(Ping)
         command(Help)
     }
 

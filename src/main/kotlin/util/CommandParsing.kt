@@ -55,7 +55,7 @@ fun parseCommandTemplate(templateString: String): CommandTemplate {
 fun parseCommandString(cmdString: String): CommandCall {
     val words = cmdString
         .drop(1) // remove BOT_PREFIX
-        .split(Regex("\\s+"))
+        .split(",") // Stupid? Maybe. Functional? Yes, at least better than what it was before
 
     return CommandCall (
         words.first(),

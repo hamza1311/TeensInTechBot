@@ -20,6 +20,10 @@ object Warn : BotCommand {
     override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
+        if (event.member?.hasPermission(Permission.MANAGE_SERVER) != true) {
+            event.message.reply("You don't have the permissions to do that.")
+            return
+        }
         val message = event.message
         message.channel.startTyping()
         if (event.member?.hasPermission(Permission.MESSAGE_MANAGE) == true) {
@@ -58,15 +62,21 @@ object Warn : BotCommand {
 
 object Warnings : BotCommand {
     override val help: String = "Get warnings for the mentioned user"
-    override val commandString: String = "warnings !user"
+    override val commandString: String = "warnings ?user"
     override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
         val message = event.message
+
+        val warningsOf = if (event.member?.hasPermission(Permission.MANAGE_SERVER) != true || message.mentionedMembers.isEmpty())
+            message.author
+        else
+            message.mentionedMembers.first()
+
         message.channel.startTyping()
         val bannedUsersEmbed = runBlocking {
-            val builder = EmbedBuilder().setTitle("Warnings for user")
-            Service.getWarningForUser(message.mentionedMembers.first().idLong)
+            val builder = EmbedBuilder().setTitle("Warnings for user: ${warningsOf.asMention}")
+            Service.getWarningForUser(warningsOf.idLong)
                 .forEachIndexed { index, it ->
                     builder.apply {
                         addField(
@@ -88,6 +98,10 @@ object UnWarn : BotCommand {
     override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
+        if (event.member?.hasPermission(Permission.MANAGE_SERVER) != true) {
+            event.message.reply("You don't have the permissions to do that.")
+            return
+        }
         event.message.channel.startTyping()
         val warningId = data.argsContent["warningid"] ?: error("Warning ID is null")
         runBlocking {

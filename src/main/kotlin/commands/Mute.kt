@@ -3,6 +3,7 @@ package commands
 import commands.models.BotCommand
 import commands.models.Category
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import util.CommandData
 import util.MUTED_ROLE
@@ -14,6 +15,10 @@ object Mute : BotCommand {
     override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
+        if (event.member?.hasPermission(Permission.MANAGE_ROLES) != true) {
+            event.message.reply("You don't have the permissions to do that.")
+            return
+        }
         val mentioned = event.message.mentionedMembers.firstOrNull() ?: error("No user was mentioned")
         event.guild.getRoleById(MUTED_ROLE)?.let { role ->
             event.guild.addRoleToMember(mentioned, role).queue { _ ->
@@ -34,6 +39,10 @@ object UnMute : BotCommand {
     override val category: Category = Category.Moderation
 
     override fun command(data: CommandData, event: MessageReceivedEvent) {
+        if (event.member?.hasPermission(Permission.MANAGE_ROLES) != true) {
+            event.message.reply("You don't have the permissions to do that.")
+            return
+        }
         val mentioned = event.message.mentionedMembers.firstOrNull() ?: error("No user was mentioned")
         event.guild.getRoleById(MUTED_ROLE)?.let { role ->
             event.guild.removeRoleFromMember(mentioned, role).queue { _ ->

@@ -18,9 +18,9 @@ object Purge : BotCommand {
             val amount = data.argsContent["amount"]?.toLong() ?: 0L
             val messages = event.channel.iterableHistory.stream().limit(amount).collect(Collectors.toList())
             messages.forEach {
-                it.delete().queue {
-                    event.message.reply("User ${event.author.asMention} deleted ${messages.size} messages")
-                }
+                it.delete().queue()
+            }.also {
+                event.message.reply("User ${event.author.asMention} deleted ${messages.size} messages")
             }
         } else {
             event.message.reply("Bruh you ain't got the permission for it")
