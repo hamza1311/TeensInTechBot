@@ -1,9 +1,11 @@
-FROM openjdk:10-jre
+FROM python:3
 
-RUN mkdir - p /usr/src/bot
+WORKDIR /usr/src/app
 
-WORKDIR /usr/src/bot
+COPY requirements.txt ./
 
-ADD build/dist/jar/TeensInTechBot-1.0-all.jar .
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["java", "-jar", "TeensInTechBot-1.0-all.jar"]
+COPY . .
+
+CMD [ "python", "./core.py" ]

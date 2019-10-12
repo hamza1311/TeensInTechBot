@@ -1,4 +1,4 @@
-# Project exclude paths
-/.gradle/
-/build/
-/token.txt
+token.txt
+keys.py
+.vscode
+cogs/__pycache__/*

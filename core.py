@@ -8,7 +8,7 @@ from keys import bot as BOT_TOKEN
 bot = commands.Bot(command_prefix="!", case_insensitive=True,
                    owner_ids=[529535587728752644])
 
-cogs = []
+cogs = ["moderation", "misc"]
 
 @bot.command()
 async def reload(ctx: commands.Context, module: str):
@@ -74,7 +74,7 @@ async def on_ready():
     print(f"{bot.user.name} is running")
     print("-"*len(bot.user.name + " is running"))
     await bot.change_presence(
-        status=discord.Status('online'),
+        status=discord.Status(discord.Status.online.__str__()),
         activity=discord.Game(f"use {bot.command_prefix}help")
     )
 
