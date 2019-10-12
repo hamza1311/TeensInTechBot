@@ -1,5 +1,6 @@
 import discord, asyncio, re
 from discord.ext import commands
+from util.functions import randomDiscordColor
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -121,7 +122,7 @@ class Moderation(commands.Cog):
             await ctx.channel.purge(limit=amount + 1)
 
             desc = f"**{amount + 1} messages were deleted in {ctx.channel.mention} by {ctx.author.mention}**"
-            embed = discord.Embed(colour=0xe45858, description=desc)
+            embed = discord.Embed(color = randomDiscordColor(), description=desc)
             await ctx.send(embed=embed)
 
 def setup(bot: commands.Bot):

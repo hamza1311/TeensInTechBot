@@ -1,6 +1,8 @@
 import discord, random
+from mongoengine import connect
 from discord.ext import commands
 from keys import bot as BOT_TOKEN
+from util.functions import randomDiscordColor
 
 # import os
 # BOT_TOKEN = os.environ['BOT_TOKEN']
@@ -8,7 +10,7 @@ from keys import bot as BOT_TOKEN
 bot = commands.Bot(command_prefix="!", case_insensitive=True,
                    owner_ids=[529535587728752644])
 
-cogs = ["moderation", "misc"]
+cogs = ["moderation", "misc", "save"]
 
 @bot.command()
 async def reload(ctx: commands.Context, module: str):
@@ -28,8 +30,7 @@ async def help(ctx: commands.Context, command: str = None):
     Displays help message
     """
 
-    embed = discord.Embed(title='**You wanted help? Help is provided**')
-    embed.colour = discord.Color(value=random.randint(0, 16777215))
+    embed = discord.Embed(title='**You wanted help? Help is provided**', color = randomDiscordColor())
     embed.set_footer(text=f'Do {bot.command_prefix}help commndName to get help for a specific command')
 
     if command is None:
@@ -81,4 +82,5 @@ async def on_ready():
     for i in cogs:
         bot.load_extension(f"cogs.{i}")
 
+client = connect('test', host = '172.22.0.2', port = 27017)
 bot.run(BOT_TOKEN)
