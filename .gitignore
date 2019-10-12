@@ -1,4 +1,4 @@
 token.txt
-keys.py
 .vscode
 cogs/__pycache__/*
+keys.py
