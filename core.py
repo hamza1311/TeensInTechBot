@@ -2,7 +2,7 @@ import discord, random
 from mongoengine import connect
 from discord.ext import commands
 from keys import bot as BOT_TOKEN
-from util.functions import randomDiscordColor
+from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 
 # import os
 # BOT_TOKEN = os.environ['BOT_TOKEN']

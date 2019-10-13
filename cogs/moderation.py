@@ -1,6 +1,8 @@
-import discord, asyncio, re
+import discord, asyncio, re, time
 from discord.ext import commands
-from util.functions import randomDiscordColor
+from datetime import datetime
+from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
+from models.Ban import Ban
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -34,28 +36,60 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx: commands.Context, victim: discord.Member, *, reason: str = None):
+    async def ban(self, ctx: commands.Context, victim: discord.Member, *, reasonAndDuration: str = ""):
         """
         Ban a user
         """
 
         if victim.id == ctx.author.id:
-            await ctx.send("You can't ban yourself")
+            await ctx.send("Why do want to ban yourself?\nI'm not gonna let you do it")
             return
         
-        victim.ban(reason=reason)
+        duration = re.search(f'([0-9]+)? ?', reasonAndDuration).group(0).strip()
+        reason = reasonAndDuration[len(duration):].strip()
+        print(duration)
+
+        # await victim.ban(reason=reason)
+
+        ban = Ban(
+                reason = reason if reason else None,
+                bannedAt = int(time.time()),
+                bannedById = ctx.author.id,
+                bannedByUsername = ctx.author.name,
+                bannedUserId = victim.id,
+                bannedUserUsername = victim.name,
+                unbanTime = (int(time.time()) + int(duration)),
+            )
         
-        await ctx.send(f"**User {victim.mention} has been banned from the server by {ctx.author.mention}**")
+        ban.save()
+
+        embedColor = randomDiscordColor()
+
+        embed = discord.Embed(title=f"User was banned from {ctx.guild.name}", color = embedColor)
+        embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = True)
+        embed.add_field(name = 'Banned user', value = victim.mention, inline = True)
+        if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
+        if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = datetime.fromtimestamp(ban.unbanTime).strftime("%d-%m-%Y, %H:%M:%S"), inline = False)
+        embed.set_footer(text = f'Banned at {datetime.fromtimestamp(ban.bannedAt).strftime("%d-%m-%Y, %H:%M:%S")}')
+        embed.set_thumbnail(url = victim.avatar_url)
+
+        await ctx.send(embed = embed)
 
         try:
-            msg = f"You have been banned from {ctx.guild.name}"
-            if reason:
-                msg += f" for `{reason}`"
-            await victim.send(msg)
+            embed = discord.Embed(title = f"You have been banned from {ctx.guild.name}", color = embedColor)
+            if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
+            embed.set_footer(text = f'Banned at {datetime.fromtimestamp(ban.bannedAt).strftime("%d-%m-%Y, %H:%M:%S")}')
+            if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = datetime.fromtimestamp(ban.unbanTime).strftime("%d-%m-%Y, %H:%M:%S"), inline = False)
+            embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = False)
+
+            await ctx.send(embed = embed)
+
         except discord.Forbidden:
             await ctx.send("I can't DM that user. Banned without notice")
-        
-        # save to db
+
+        if duration:
+            await asyncio.sleep(int(duration))
+            await victim.unban()
 
 
     @commands.command()
