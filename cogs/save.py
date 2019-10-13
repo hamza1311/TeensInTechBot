@@ -1,8 +1,9 @@
+# pylint: disable=no-member
 import discord
 from discord.ext import commands
-from Models.Save import Save
+from models.Save import Save
 from mongoengine import DoesNotExist
-from util.functions import randomDiscordColor
+from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 
 class SaveStuff(commands.Cog):
     def __init__(self, bot: commands.Bot):
