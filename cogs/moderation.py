@@ -111,6 +111,7 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
+    @commands.has_permissions(manage_roles=True, manage_channels=True)
     async def mute(self, ctx: commands.Context, victim: discord.Member, *, reasonAndDuration: str = ""):
         """
         Mute a user
@@ -170,6 +171,7 @@ class Moderation(commands.Cog):
             mute.update(set__isStillMuted=False)
     
     @commands.command()
+    @commands.has_permissions(manage_roles=True, manage_channels=True)
     async def unmute(self, ctx: commands.Context, victim: discord.Member):
         """
         Unmute a user
@@ -189,13 +191,30 @@ class Moderation(commands.Cog):
         await ctx.send(f"**User {victim.mention} has been unmuted by {ctx.author.mention}**")
 
     @commands.command()
+    @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx: commands.Context, amount: int):
         if ctx.channel.permissions_for(ctx.author).manage_messages:
             await ctx.channel.purge(limit=amount + 1)
 
-            desc = f"**{amount + 1} messages were deleted in {ctx.channel.mention} by {ctx.author.mention}**"
-            embed = discord.Embed(color = randomDiscordColor(), description=desc)
+            embed = discord.Embed(
+                color = randomDiscordColor(), 
+                description=f"**{amount + 1} messages were deleted in {ctx.channel.mention} by {ctx.author.mention}**",
+            )
             await ctx.send(embed=embed)
+
+    @commands.command()
+    async def warn(self, ctx: commands.Context, victim: discord.Member):
+        """
+        Warn a user
+        """
+        pass
+
+    @commands.command()
+    async def warnings(self, ctx: commands.Context, victim: discord.Member):
+        """
+        Get warnings for a user
+        """
+        pass
 
 def setup(bot: commands.Bot):
     bot.add_cog(Moderation(bot))
