@@ -3,7 +3,7 @@ import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
 from util.functions import randomDiscordColor, formatTime # pylint: disable=no-name-in-module
-from models import Ban, Kick, Mute
+from models import Ban, Kick, Mute, Warning
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -203,11 +203,22 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command()
-    async def warn(self, ctx: commands.Context, victim: discord.Member):
+    async def warn(self, ctx: commands.Context, victim: discord.Member, reason: str):
         """
         Warn a user
         """
-        pass
+        
+        warning = Warning.Warning(
+            reason = reason,
+            warnedAt = int(time.time()),
+            warnedById = ctx.author.id,
+            warnedByUsername = ctx.author.name,
+            warnedUserId = victim.name,
+            warnedUserUsername = victim.id,
+        )
+
+        warning.save()
+        
 
     @commands.command()
     async def warnings(self, ctx: commands.Context, victim: discord.Member):
