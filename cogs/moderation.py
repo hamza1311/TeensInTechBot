@@ -1,8 +1,9 @@
+# pylint: disable=no-member
 import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
 from util.functions import randomDiscordColor, formatTime # pylint: disable=no-name-in-module
-from models import Ban, Kick
+from models import Ban, Kick, Mute
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -110,12 +111,13 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
-    async def mute(self, ctx: commands.Context, victim: discord.Member, *, reasonAndDuration: str = None):
+    async def mute(self, ctx: commands.Context, victim: discord.Member, *, reasonAndDuration: str = ""):
         """
         Mute a user
         Duration must be given in seconds. Use a calculator, not me.
         Mute will become permanent if bot script is restarted
         """
+        ctx.trigger_typing()
 
         duration = re.search(f'([0-9]+)? ?', reasonAndDuration).group(0).strip()
         reason = reasonAndDuration[len(duration):].strip()
@@ -125,6 +127,10 @@ class Moderation(commands.Cog):
             return
         
         muted = ctx.guild.get_role(597012103492272128)
+
+        if muted in victim.roles:
+            await ctx.send('User is already muted')
+            return
         
         out = f"**User {victim.mention} has been muted by {ctx.author.mention}**"
         
@@ -143,29 +149,44 @@ class Moderation(commands.Cog):
         except discord.Forbidden:
             await ctx.send("I can't DM that user. Muted without notice")
         
-        # save to db
+        mute = Mute.Mute(
+                reason = reason,
+                mutedAt = int(time.time()),
+                mutedById = ctx.author.id,
+                mutedByUsername = ctx.author.name,
+                mutedUserId = victim.id,
+                mutedUserUsername = victim.name,
+                isStillMuted = True,
+            )
+        
+        mute.save()
 
         if duration:
             await asyncio.sleep(int(duration))
             await victim.remove_roles(muted)
             for channel in ctx.guild.channels:
                 await channel.set_permissions(victim, overwrite=None)
-            
+
+            mute.update(set__isStillMuted=False)
     
     @commands.command()
     async def unmute(self, ctx: commands.Context, victim: discord.Member):
         """
         Unmute a user
         """
+        ctx.trigger_typing()
+
         muted = ctx.guild.get_role(597012103492272128)
+
+        mute = Mute.Mute.objects(isStillMuted=True, mutedUserId=victim.id).get()
 
         await victim.remove_roles(muted)
         for channel in ctx.guild.channels:
             await channel.set_permissions(victim, overwrite=None)
 
-        out = f"**User {victim.mention} has been unmuted by {ctx.author.mention}**"
+        mute.update(set__isStillMuted=False)
 
-        await ctx.send(out)
+        await ctx.send(f"**User {victim.mention} has been unmuted by {ctx.author.mention}**")
 
     @commands.command()
     async def purge(self, ctx: commands.Context, amount: int):
