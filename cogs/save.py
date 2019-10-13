@@ -25,9 +25,8 @@ class SaveStuff(commands.Cog):
         for i in Save.objects(savedBy = ctx.author.id):
             out += i.data + '\n'
 
-        embed = discord.Embed()
+        embed = discord.Embed(color = randomDiscordColor())
         embed.add_field(name = 'Stuff saved', value=out, inline=False)
-        embed.color = randomDiscordColor()
         await ctx.send(embed = embed)
     
     @commands.command()

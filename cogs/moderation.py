@@ -1,16 +1,13 @@
 import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
-from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
-from models.Ban import Ban
+from util.functions import randomDiscordColor, formatTime # pylint: disable=no-name-in-module
+from models import Ban, Kick
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def ping(self, ctx: commands.Context):
-        await ctx.send('pong')
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
@@ -19,20 +16,41 @@ class Moderation(commands.Cog):
         Yeet a user
         """
 
-        msg = f"You have been kicked from {ctx.guild.name}"
-        if reason:
-            msg += f" for `{reason}`"
+        embedColor =  randomDiscordColor()
+
+        kick = Kick.Kick(
+            reason = reason,
+            kickedAt = int(time.time()),
+            kickedById = ctx.author.id,
+            kickedByUsername = ctx.author.name,
+            kickedUserId = victim.id,
+            kickedUserUsername = victim.name,
+        )
+
+        kick.save()
+
+        # await victim.kick(reason=reason)
+
+        embed = discord.Embed(title=f"User was Kicked from {ctx.guild.name}", color = embedColor)
+        embed.add_field(name = 'Kicked By', value = ctx.author.mention, inline = True)
+        embed.add_field(name = 'Kicked user', value = victim.mention, inline = True)
+        if reason: embed.add_field(name = 'Reason', value = kick.reason, inline = False)
+        embed.set_footer(text = f'Kicked at {formatTime(kick.kickedAt)}')
+        embed.set_thumbnail(url = victim.avatar_url)
+
+        await ctx.send(embed = embed)
 
         try:
-            await victim.send(msg)
+            embed = discord.Embed(title = f"You have been Kicked from {ctx.guild.name}", color = embedColor)
+            if reason: embed.add_field(name = 'Reason', value = kick.reason, inline = False)
+            embed.set_footer(text = f'Kicked at {formatTime(kick.kickedAt)}')
+            embed.add_field(name = 'Kicked By', value = ctx.author.mention, inline = False)
+
+            await ctx.send(embed=embed)
+
         except discord.Forbidden:
-            await ctx.send("❗ I can't dm that user")
+            await ctx.send("I can't dm that user. Kicked without notice")
 
-        await ctx.send(
-            f"**User {victim.mention} has been kicked by {ctx.author.mention}**")
-        await victim.kick(reason=reason)
-
-        # save kicked user to db
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
@@ -47,11 +65,10 @@ class Moderation(commands.Cog):
         
         duration = re.search(f'([0-9]+)? ?', reasonAndDuration).group(0).strip()
         reason = reasonAndDuration[len(duration):].strip()
-        print(duration)
 
         # await victim.ban(reason=reason)
 
-        ban = Ban(
+        ban = Ban.Ban(
                 reason = reason if reason else None,
                 bannedAt = int(time.time()),
                 bannedById = ctx.author.id,
@@ -68,9 +85,9 @@ class Moderation(commands.Cog):
         embed = discord.Embed(title=f"User was banned from {ctx.guild.name}", color = embedColor)
         embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = True)
         embed.add_field(name = 'Banned user', value = victim.mention, inline = True)
+        if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = formatTime(ban.unbanTime), inline = True)
         if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
-        if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = datetime.fromtimestamp(ban.unbanTime).strftime("%d-%m-%Y, %H:%M:%S"), inline = False)
-        embed.set_footer(text = f'Banned at {datetime.fromtimestamp(ban.bannedAt).strftime("%d-%m-%Y, %H:%M:%S")}')
+        embed.set_footer(text = f'Banned at {formatTime(ban.bannedAt)}')
         embed.set_thumbnail(url = victim.avatar_url)
 
         await ctx.send(embed = embed)
@@ -78,9 +95,9 @@ class Moderation(commands.Cog):
         try:
             embed = discord.Embed(title = f"You have been banned from {ctx.guild.name}", color = embedColor)
             if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
-            embed.set_footer(text = f'Banned at {datetime.fromtimestamp(ban.bannedAt).strftime("%d-%m-%Y, %H:%M:%S")}')
-            if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = datetime.fromtimestamp(ban.unbanTime).strftime("%d-%m-%Y, %H:%M:%S"), inline = False)
-            embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = False)
+            embed.set_footer(text = f'Banned at {formatTime(ban.bannedAt)}')
+            if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = formatTime(ban.unbanTime), inline = True)
+            embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = True)
 
             await ctx.send(embed = embed)
 
