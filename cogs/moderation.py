@@ -9,7 +9,6 @@ class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, victim: discord.Member, *, reason:str = None):
@@ -258,6 +257,23 @@ class Moderation(commands.Cog):
                 inline=False
             )
 
+        await ctx.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
+        embed = discord.Embed(
+            title=f"A bruh moment happened while processing {ctx.command}",
+            color = randomDiscordColor()
+        )
+
+        try:
+            raise error
+        except Exception as e:
+            if isinstance(error, commands.errors.CommandNotFound):
+                embed.title = f"A bruh moment happened: You probably made a typo"
+
+            embed.add_field(name = "Error:", value = str(e), inline=False)
+        
         await ctx.send(embed=embed)
 
 
