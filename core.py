@@ -10,7 +10,7 @@ from util.functions import randomDiscordColor # pylint: disable=no-name-in-modul
 bot = commands.Bot(command_prefix="!", case_insensitive=True,
                    owner_ids=[529535587728752644])
 
-cogs = ["moderation", "misc", "save"]
+cogs = ["moderation", "misc", "save", "roles"]
 
 @bot.command()
 async def reload(ctx: commands.Context, module: str):

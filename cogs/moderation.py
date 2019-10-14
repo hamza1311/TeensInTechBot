@@ -259,22 +259,6 @@ class Moderation(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
-        embed = discord.Embed(
-            title=f"A bruh moment happened while processing {ctx.command}",
-            color = randomDiscordColor()
-        )
-
-        try:
-            raise error
-        except Exception as e:
-            if isinstance(error, commands.errors.CommandNotFound):
-                embed.title = f"A bruh moment happened: You probably made a typo"
-
-            embed.add_field(name = "Error:", value = str(e), inline=False)
-        
-        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):
