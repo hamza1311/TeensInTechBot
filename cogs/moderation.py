@@ -213,19 +213,53 @@ class Moderation(commands.Cog):
             warnedAt = int(time.time()),
             warnedById = ctx.author.id,
             warnedByUsername = ctx.author.name,
-            warnedUserId = victim.name,
-            warnedUserUsername = victim.id,
+            warnedUserId = victim.id,
+            warnedUserUsername = victim.name,
         )
 
         warning.save()
-        
+
+        embedColor = randomDiscordColor()
+
+        embed = discord.Embed(title=f"User was Warned from {ctx.guild.name}", color = embedColor)
+        embed.add_field(name = 'Warned By', value = ctx.author.mention, inline = True)
+        embed.add_field(name = 'Warned user', value = victim.mention, inline = True)
+        if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
+        embed.set_footer(text = f'Warned at {formatTime(warning.warnedAt)}')
+        embed.set_thumbnail(url = victim.avatar_url)
+
+        await ctx.send(embed = embed)
+
+        try:
+            embed = discord.Embed(title = f"You have been Warned in {ctx.guild.name}", color = embedColor)
+            if reason: embed.add_field(name = 'Reason', value = reason, inline = False)
+            embed.set_footer(text = f'Warned at {formatTime(warning.warnedAt)}')
+            embed.add_field(name = 'Warned By', value = ctx.author.mention, inline = True)
+
+            await ctx.send(embed = embed)
+
+        except discord.Forbidden:
+            await ctx.send("I can't DM that user. Warned without notice")
+
 
     @commands.command()
-    async def warnings(self, ctx: commands.Context, victim: discord.Member):
+    async def warnings(self, ctx: commands.Context, warningsFor: discord.Member):
         """
         Get warnings for a user
         """
-        pass
+
+        warnings = Warning.Warning.objects(warnedUserId=warningsFor.id)
+        embed = discord.Embed(title = f"Warnings for {warningsFor.name}", color = randomDiscordColor())
+        index = 1
+        for warning in warnings:
+            embed.add_field(
+                name=f"{index}. {warning.reason}",
+                value = f"Warned by: {warning.warnedByUsername}\nWarned at: {formatTime(warning.warnedAt)}",
+                inline=False
+            )
+
+        await ctx.send(embed=embed)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Moderation(bot))
