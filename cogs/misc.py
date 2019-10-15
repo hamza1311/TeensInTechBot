@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
+from models import BotConfig
 
 class Miscellaneous(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -29,12 +30,14 @@ class Miscellaneous(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        channel = member.guild.get_channel(0)
+        config = BotConfig.BotConfig.getForGuild(member.guild.id)
+        channel = member.guild.get_channel(config.welcomeChannel)
         await channel.send(f'Welcome to {member.guild.name}, {member.mention}!')
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        channel = member.guild.get_channel(0)
+        config = BotConfig.BotConfig.getForGuild(member.guild.id)
+        channel = member.guild.get_channel(config.welcomeChannel)
         await channel.send(f'{member.name} just left :(')
         
 

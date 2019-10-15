@@ -20,15 +20,18 @@ class BotConfig(commands.Cog):
         modIdsMsg = await self.bot.wait_for('message', check=pred)
         modIds = [int(str(id).strip()) for id in str(modIdsMsg.content).split(',')]
 
+        await ctx.send('What channel do you want to use for welcome message? Please enter the channel ID')
+        welcomeCnlId = await self.bot.wait_for('message', check=pred)
         botConfig = models.BotConfig.BotConfig(
             serverId = ctx.guild.id,
             rolesChannelId = rolesCnlId.content,
             modIds = modIds,
+            welcomeChannel = welcomeCnlId.content,
         )
 
         botConfig.save()
 
-        await ctx.send(f'Great! The channel for self assignable roles is {botConfig.rolesChannelId}')
+        await ctx.send(f'Great! The channel for self assignable roles is {botConfig.rolesChannelId}\nMod IDs are {botConfig.modIds}\nWelcome channel is {botConfig.welcomeChannel}')
 
     @commands.command()
     @commands.is_owner()
