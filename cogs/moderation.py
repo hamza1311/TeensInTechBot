@@ -236,7 +236,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text = f'Warned at {formatTime(warning.warnedAt)}')
             embed.add_field(name = 'Warned By', value = ctx.author.mention, inline = True)
 
-            await ctx.send(embed = embed)
+            await victim.send(embed = embed)
 
         except discord.Forbidden:
             await ctx.send("I can't DM that user. Warned without notice")
