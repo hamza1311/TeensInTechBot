@@ -2,7 +2,7 @@
 import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
-from util.functions import randomDiscordColor, formatTime # pylint: disable=no-name-in-module
+from util.functions import randomDiscordColor, formatTime, isMod # pylint: disable=no-name-in-module
 from models import Ban, Kick, Mute, Warning
 
 class Moderation(commands.Cog):
@@ -29,7 +29,7 @@ class Moderation(commands.Cog):
 
         kick.save()
 
-        # await victim.kick(reason=reason)
+        await victim.kick(reason=reason)
 
         embed = discord.Embed(title=f"User was Kicked from {ctx.guild.name}", color = embedColor)
         embed.add_field(name = 'Kicked By', value = ctx.author.mention, inline = True)
@@ -46,7 +46,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text = f'Kicked at {formatTime(kick.kickedAt)}')
             embed.add_field(name = 'Kicked By', value = ctx.author.mention, inline = False)
 
-            await ctx.send(embed=embed)
+            await victim.send(embed=embed)
 
         except discord.Forbidden:
             await ctx.send("I can't dm that user. Kicked without notice")
@@ -66,7 +66,7 @@ class Moderation(commands.Cog):
         duration = re.search(f'([0-9]+)? ?', reasonAndDuration).group(0).strip()
         reason = reasonAndDuration[len(duration):].strip()
 
-        # await victim.ban(reason=reason)
+        await victim.ban(reason=reason)
 
         ban = Ban.Ban(
                 reason = reason if reason else None,
@@ -99,7 +99,7 @@ class Moderation(commands.Cog):
             if (ban.unbanTime != 0): embed.add_field(name = 'Banned till', value = formatTime(ban.unbanTime), inline = True)
             embed.add_field(name = 'Banned By', value = ctx.author.mention, inline = True)
 
-            await ctx.send(embed = embed)
+            await victim.send(embed = embed)
 
         except discord.Forbidden:
             await ctx.send("I can't DM that user. Banned without notice")
@@ -145,7 +145,7 @@ class Moderation(commands.Cog):
             if reason:
                 msg += f" for `{reason}`"
 
-            # await victim.send(msg)
+            await victim.send(msg)
         except discord.Forbidden:
             await ctx.send("I can't DM that user. Muted without notice")
         
@@ -202,6 +202,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command()
+    @isMod()
     async def warn(self, ctx: commands.Context, victim: discord.Member, reason: str):
         """
         Warn a user
@@ -242,6 +243,7 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
+    @isMod()
     async def warnings(self, ctx: commands.Context, warningsFor: discord.Member):
         """
         Get warnings for a user

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from models import Role
+from models import Role, BotConfig
 
 class Roles(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -18,7 +18,7 @@ class Roles(commands.Cog):
         emoji = str(payload.emoji)
         channel = payload.channel_id
 
-        if channel:
+        if channel == BotConfig.BotConfig.getForGuild(guildId=guild).rolesChannelId:
             guild = self.bot.get_guild(guild)
             for role in self.reactRoles:
                 if role.messageId == messageId:
@@ -40,9 +40,8 @@ class Roles(commands.Cog):
         guildId = payload.guild_id
         emoji = str(payload.emoji)
         channel = payload.channel_id
-
-        if channel:
-            print('true')
+        
+        if channel == BotConfig.BotConfig.getForGuild(guildId=guildId).rolesChannelId:
             guild = self.bot.get_guild(guildId)
             for role in self.reactRoles:
                 if role.messageId == messageId:
