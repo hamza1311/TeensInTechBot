@@ -83,7 +83,7 @@ async def on_ready():
         bot.load_extension(f"cogs.{i}")
 
 client = connect('test', host = 'db', port = 27017)
+
 with open('/run/secrets/token') as file:
-    token = file.read()
-print(token)
-bot.run(token)
+    BOT_TOKEN = file.read()
+bot.run(BOT_TOKEN)

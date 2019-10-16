@@ -11,6 +11,9 @@ class SaveStuff(commands.Cog):
 
     @commands.command()
     async def save(self, ctx: commands.Context, content: str):
+        """
+        Save stuff to DB
+        """
         save = Save(savedBy = ctx.author.id, data = content)
         save.save()
         embed = discord.Embed(title='Saved', color = randomDiscordColor())
@@ -21,6 +24,9 @@ class SaveStuff(commands.Cog):
 
     @commands.command()
     async def get(self, ctx: commands.Context):
+        """
+        Get saved stuff for the author from DB
+        """
         out = ''
         for i in Save.objects(savedBy = ctx.author.id):
             out += i.data + '\n'
@@ -31,6 +37,9 @@ class SaveStuff(commands.Cog):
     
     @commands.command()
     async def delete(self, ctx: commands.Context, content: str):
+        """
+        Delete something that was saved previously
+        """
         try:
             Save.objects(savedBy = ctx.author.id, data=content).get().delete()
             await ctx.send(f'Deleted doc')

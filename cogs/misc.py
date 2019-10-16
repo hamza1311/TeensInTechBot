@@ -1,4 +1,4 @@
-import discord
+import discord, logging
 from discord.ext import commands
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 from models import BotConfig
@@ -8,8 +8,16 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def say(self, ctx: commands.Context, content: str):
+    async def say(self, ctx: commands.Context, *, content: str):
+        """
+        Have the bot will respond with whatever argmeument you give it
+        """
         await ctx.send(content)
+    
+    @commands.command()
+    async def react(self, ctx: commands.Context, messageId, emoji: str):
+        message = await ctx.channel.fetch_message(messageId)
+        await message.add_reaction(emoji)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
@@ -18,21 +26,20 @@ class Miscellaneous(commands.Cog):
             color = randomDiscordColor()
         )
 
-        try:
-            raise error
-        except Exception as e:
-            if isinstance(error, commands.errors.CommandNotFound):
-                embed.title = f"A bruh moment happened: You probably made a typo"
+        if isinstance(error, commands.errors.CommandNotFound):
+            return
 
-            embed.add_field(name = "Error:", value = str(e), inline=False)
-        
+        embed.add_field(name = "Error:", value = str(error), inline=False)
+            
         await ctx.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member):
         config = BotConfig.BotConfig.getForGuild(member.guild.id)
         channel = member.guild.get_channel(config.welcomeChannel)
         await channel.send(f'Welcome to {member.guild.name}, {member.mention}!')
+        memberRole = member.guild.get_role(config.memberRoleId)
+        member.add_roles(memberRole)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):

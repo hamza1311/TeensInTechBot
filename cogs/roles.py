@@ -18,19 +18,19 @@ class Roles(commands.Cog):
         emoji = str(payload.emoji)
         channel = payload.channel_id
 
+        if user == self.bot.user.id:
+            return
+
         if channel == BotConfig.BotConfig.getForGuild(guildId=guild).rolesChannelId:
             guild = self.bot.get_guild(guild)
             for role in self.reactRoles:
                 if role.messageId == messageId:
                     member = guild.get_member(user)
                     channel = guild.get_channel(channel)
-                    message = await channel.fetch_message(messageId)
                     if role.roleEmoji == emoji:
                         await member.add_roles(guild.get_role(role.roleId))
                         role.update(push__assignedTo=user)
                         return
-                    else:
-                        await message.remove_reaction(emoji, member)
     
     
     @commands.Cog.listener()
@@ -41,6 +41,9 @@ class Roles(commands.Cog):
         emoji = str(payload.emoji)
         channel = payload.channel_id
         
+        if userId == self.bot.user.id:
+            return
+
         if channel == BotConfig.BotConfig.getForGuild(guildId=guildId).rolesChannelId:
             guild = self.bot.get_guild(guildId)
             for role in self.reactRoles:
@@ -55,6 +58,10 @@ class Roles(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def addRole(self, ctx: commands.Context, role: discord.Role, emoji: str, messageId: int):
+        """
+        Add a new role for self assignable roles
+        Takes in a role, the emoji for react role and message ID which to be reacted to in order to get this role assigned
+        """
         print(emoji)
         reactRole = Role.Role(
             roleId = role.id,
@@ -62,6 +69,9 @@ class Roles(commands.Cog):
             assignedTo = [],
             messageId = messageId
         )
+
+        message = await ctx.channel.fetch_message(messageId)
+        await message.add_reaction(str(emoji))
 
         reactRole.save()
         await ctx.send('Saved')

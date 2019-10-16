@@ -5,6 +5,8 @@ class BotConfig(Document):
     rolesChannelId = LongField(required=True)
     modIds = ListField(required=True)
     welcomeChannel = LongField(required=True)
+    memberRoleId = LongField(required=True)
+    mutedRoleId = LongField(required=True)
 
     @staticmethod
     def getForGuild(guildId):

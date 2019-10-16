@@ -3,7 +3,7 @@ import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
 from util.functions import randomDiscordColor, formatTime, isMod # pylint: disable=no-name-in-module
-from models import Ban, Kick, Mute, Warning
+from models import Ban, Kick, Mute, Warning, BotConfig
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -126,7 +126,8 @@ class Moderation(commands.Cog):
             await ctx.send("Why do want to mute yourself?\nI'm not gonna let you do it")
             return
         
-        muted = ctx.guild.get_role(597012103492272128)
+        config = BotConfig.BotConfig.getForGuild(guildId = ctx.guild.id)
+        muted = ctx.guild.get_role(config.mutedRoleId)
 
         if muted in victim.roles:
             await ctx.send('User is already muted')
@@ -177,7 +178,8 @@ class Moderation(commands.Cog):
         """
         ctx.trigger_typing()
 
-        muted = ctx.guild.get_role(597012103492272128)
+        config = BotConfig.BotConfig.getForGuild(guildId = ctx.guild.id)
+        muted = ctx.guild.get_role(config.mutedRoleId)
 
         mute = Mute.Mute.objects(isStillMuted=True, mutedUserId=victim.id).get()
 
@@ -192,6 +194,9 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx: commands.Context, amount: int):
+        """
+        Bluk delete the given amount of messages
+        """
         if ctx.channel.permissions_for(ctx.author).manage_messages:
             await ctx.channel.purge(limit=amount + 1)
 
