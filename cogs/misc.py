@@ -22,19 +22,19 @@ class Miscellaneous(commands.Cog):
         message = await ctx.channel.fetch_message(messageId)
         await message.add_reaction(emoji)
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
-    #     embed = discord.Embed(
-    #         title=f"A bruh moment happened while processing {ctx.command}",
-    #         color = randomDiscordColor()
-    #     )
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
+        embed = discord.Embed(
+            title=f"A bruh moment happened while processing {ctx.command}",
+            color = randomDiscordColor()
+        )
 
-    #     if isinstance(error, commands.errors.CommandNotFound):
-    #         return
+        if isinstance(error, commands.errors.CommandNotFound):
+            return
 
-    #     embed.add_field(name = "Error:", value = str(error), inline=False)
+        embed.add_field(name = "Error:", value = str(error), inline=False)
             
-    #     await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
