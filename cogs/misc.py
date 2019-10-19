@@ -2,7 +2,7 @@ import discord, logging
 from discord.ext import commands
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 from models import BotConfig
-from util.publicCommads import publicCommand
+from util.publicCommads import publicCommand # pylint: disable=no-name-in-module
 
 class Miscellaneous(commands.Cog):
     def __init__(self, bot: commands.Bot):
