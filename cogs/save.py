@@ -4,11 +4,13 @@ from discord.ext import commands
 from models.Save import Save
 from mongoengine import DoesNotExist
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
+from util.publicCommands import publicCommand # pylint: disable=no-name-in-module
 
 class SaveStuff(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @publicCommand    
     @commands.command()
     async def save(self, ctx: commands.Context, content: str):
         """
@@ -21,7 +23,7 @@ class SaveStuff(commands.Cog):
         embed.add_field(name = 'saved by', value=ctx.author.mention)
         await ctx.send(embed=embed)
 
-
+    @publicCommand
     @commands.command()
     async def get(self, ctx: commands.Context):
         """
@@ -34,7 +36,8 @@ class SaveStuff(commands.Cog):
         embed = discord.Embed(color = randomDiscordColor())
         embed.add_field(name = 'Stuff saved', value=out, inline=False)
         await ctx.send(embed = embed)
-    
+
+    @publicCommand    
     @commands.command()
     async def delete(self, ctx: commands.Context, content: str):
         """

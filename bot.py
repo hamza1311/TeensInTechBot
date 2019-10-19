@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from util.functions import randomDiscordColor, isMod # pylint: disable=no-name-in-module
 import models
-from util.publicCommads import publicCommands # pylint: disable=no-name-in-module
+from util.publicCommands import publicCommand, publicCommands # pylint: disable=no-name-in-module
 
 
 class Bot(commands.Cog):
@@ -62,6 +62,7 @@ class Bot(commands.Cog):
             self.bot.reload_extension(f'cogs.{module}')
         await ctx.send("🔄")
 
+    @publicCommand
     @commands.command()
     async def help(self, ctx: commands.Context, command: str = None):
         """
