@@ -56,8 +56,10 @@ class Bot(commands.Cog):
         """
         Reloads a cog
         """
-
-        self.bot.reload_extension(f'cogs.{module}')
+        if module == 'bot':
+            self.bot.reload_extension('bot')
+        else:
+            self.bot.reload_extension(f'cogs.{module}')
         await ctx.send("🔄")
 
     @commands.command()
@@ -74,20 +76,13 @@ class Bot(commands.Cog):
 
             for name, cog in self.bot.cogs.items():
                 out = ''
-                cmds = [x for x in cog.get_commands() if x.name in publicCommands or (await self.bot.is_owner(ctx.author)) or isMod(ctx)]
+                cmds = [x for x in cog.get_commands() if x.name in publicCommands or (await self.bot.is_owner(ctx.author)) or (isMod(ctx) and 'is_owner' not in str(x.checks))]
                 for cmd in cmds:
                     helpStr = str(cmd.help).split('\n')[0]
                     out += f"**{cmd.name}**:\t{helpStr}\n"
 
-                embed.add_field(name=f'**{name}**', value=out, inline=False)
-            
-            # out = ''
-            # cmds = [help, reload]
-            # for cmd in cmds:
-            #     helpStr = str(cmd.help).split('\n')[0]
-            #     out += f"**{cmd.name}**:\t{helpStr}\n"
-
-            # embed.add_field(name='**Uncategorized**', value=out, inline=False)
+                if out:
+                    embed.add_field(name=f'**{name}**', value=out, inline=False)
         else:
             
             cmd = self.bot.get_command(command)
