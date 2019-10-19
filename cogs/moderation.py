@@ -195,7 +195,7 @@ class Moderation(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx: commands.Context, amount: int):
         """
-        Bluk delete the given amount of messages
+        Bulk delete the given amount of messages
         """
         if ctx.channel.permissions_for(ctx.author).manage_messages:
             await ctx.channel.purge(limit=amount + 1)

@@ -87,9 +87,16 @@ class Bot(commands.Cog):
         else:
             
             cmd = self.bot.get_command(command)
-
+            try:
+                canRun = await cmd.can_run(ctx)
+            except commands.errors.CommandError:
+                canRun = False
+            print(canRun)
             if cmd is None:
                 await ctx.send(f"Command {command} doesn't exist")
+                return
+            elif not canRun and not await self.bot.is_owner(ctx.author):
+                await ctx.send(f"You can't run {command} command")
                 return
 
             embed.add_field(name = f'{cmd.name}', value = cmd.help, inline=False)
