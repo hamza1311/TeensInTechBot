@@ -12,7 +12,7 @@ class SaveStuff(commands.Cog):
 
     @publicCommand    
     @commands.command()
-    async def save(self, ctx: commands.Context, content: str):
+    async def save(self, ctx: commands.Context, *, content: str):
         """
         Save stuff to DB
         """
@@ -39,7 +39,7 @@ class SaveStuff(commands.Cog):
 
     @publicCommand    
     @commands.command()
-    async def delete(self, ctx: commands.Context, content: str):
+    async def delete(self, ctx: commands.Context, *, content: str):
         """
         Delete something that was saved previously
         """
