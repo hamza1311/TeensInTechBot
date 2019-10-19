@@ -1,7 +1,7 @@
 import discord, random
 from mongoengine import connect
 from discord.ext import commands
-from keys import bot as BOT_TOKEN
+# from keys import bot as BOT_TOKEN
 from util.functions import randomDiscordColor, isMod # pylint: disable=no-name-in-module
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True,
@@ -25,8 +25,8 @@ async def on_ready():
     
     bot.load_extension(f"bot") # Load cog for bot. This is at root of the project, not in /cogs because otherwise reload command doesn't work
 
-client = connect('test', host = '172.20.0.2', port = 27017)
+client = connect('test', host = 'db', port = 27017)
 
-# with open('/run/secrets/token') as file:
-#     BOT_TOKEN = file.read()
+with open('/run/secrets/token') as file:
+    BOT_TOKEN = file.read()
 bot.run(BOT_TOKEN)
