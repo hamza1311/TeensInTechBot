@@ -2,7 +2,7 @@
 import discord, asyncio, re, time
 from discord.ext import commands
 from datetime import datetime
-from util.functions import randomDiscordColor, formatTime, isMod # pylint: disable=no-name-in-module
+from util.functions import randomDiscordColor, formatTime, modOnly # pylint: disable=no-name-in-module
 from models import Ban, Kick, Mute, Warning, BotConfig
 
 class Moderation(commands.Cog):
@@ -207,7 +207,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command()
-    @isMod()
+    @modOnly()
     async def warn(self, ctx: commands.Context, victim: discord.Member, reason: str):
         """
         Warn a user
@@ -248,7 +248,7 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
-    @isMod()
+    @modOnly()
     async def warnings(self, ctx: commands.Context, warningsFor: discord.Member):
         """
         Get warnings for a user

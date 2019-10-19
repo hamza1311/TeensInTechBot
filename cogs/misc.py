@@ -2,36 +2,39 @@ import discord, logging
 from discord.ext import commands
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 from models import BotConfig
+from util.publicCommads import publicCommand
 
 class Miscellaneous(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @publicCommand
     @commands.command()
     async def say(self, ctx: commands.Context, *, content: str):
         """
         Have the bot will respond with whatever argmeument you give it
         """
         await ctx.send(content)
-    
+        
+    @publicCommand    
     @commands.command()
     async def react(self, ctx: commands.Context, messageId, emoji: str):
         message = await ctx.channel.fetch_message(messageId)
         await message.add_reaction(emoji)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
-        embed = discord.Embed(
-            title=f"A bruh moment happened while processing {ctx.command}",
-            color = randomDiscordColor()
-        )
+    # @commands.Cog.listener()
+    # async def on_command_error(self, ctx: commands.Context, error: commands.errors.CommandError):
+    #     embed = discord.Embed(
+    #         title=f"A bruh moment happened while processing {ctx.command}",
+    #         color = randomDiscordColor()
+    #     )
 
-        if isinstance(error, commands.errors.CommandNotFound):
-            return
+    #     if isinstance(error, commands.errors.CommandNotFound):
+    #         return
 
-        embed.add_field(name = "Error:", value = str(error), inline=False)
+    #     embed.add_field(name = "Error:", value = str(error), inline=False)
             
-        await ctx.send(embed=embed)
+    #     await ctx.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):

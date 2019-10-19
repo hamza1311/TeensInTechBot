@@ -1,8 +1,9 @@
 import discord, random
 from mongoengine import connect
 from discord.ext import commands
-# from keys import bot as BOT_TOKEN
-from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
+from keys import bot as BOT_TOKEN
+from util.functions import randomDiscordColor, isMod # pylint: disable=no-name-in-module
+from util.publicCommads import publicCommands
 
 # import os
 # BOT_TOKEN = os.environ['BOT_TOKEN']
@@ -13,6 +14,7 @@ bot = commands.Bot(command_prefix="!", case_insensitive=True,
 cogs = ["moderation", "misc", "save", "roles", "botconfig"]
 
 @bot.command()
+@commands.is_owner()
 async def reload(ctx: commands.Context, module: str):
     """
     Reloads a cog
@@ -34,11 +36,12 @@ async def help(ctx: commands.Context, command: str = None):
     embed.set_footer(text=f'Do {bot.command_prefix}help commndName to get help for a specific command')
 
     if command is None:
+        print(publicCommands)
 
         for name, cog in bot.cogs.items():
             out = ''
-            for cmd in cog.get_commands():
-
+            cmds = [x for x in cog.get_commands() if x.name in publicCommands or (await bot.is_owner(ctx.author)) or isMod(ctx)]
+            for cmd in cmds:
                 helpStr = str(cmd.help).split('\n')[0]
                 out += f"**{cmd.name}**:\t{helpStr}\n"
 
@@ -57,6 +60,7 @@ async def help(ctx: commands.Context, command: str = None):
 
         if cmd is None:
             await ctx.send(f"Command {command} doesn't exist")
+            return
 
         embed.add_field(name = f'{cmd.name}', value = cmd.help, inline=False)
 
@@ -82,8 +86,8 @@ async def on_ready():
     for i in cogs:
         bot.load_extension(f"cogs.{i}")
 
-client = connect('test', host = 'db', port = 27017)
+client = connect('test', host = '172.20.0.2', port = 27017)
 
-with open('/run/secrets/token') as file:
-    BOT_TOKEN = file.read()
+# with open('/run/secrets/token') as file:
+#     BOT_TOKEN = file.read()
 bot.run(BOT_TOKEN)
