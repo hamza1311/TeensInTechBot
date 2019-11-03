@@ -3,6 +3,7 @@ from discord.ext import commands
 from util.functions import randomDiscordColor # pylint: disable=no-name-in-module
 from models import BotConfig
 from util.publicCommands import publicCommand # pylint: disable=no-name-in-module
+from mongoengine import DoesNotExist
 
 class Miscellaneous(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -23,11 +24,18 @@ class Miscellaneous(commands.Cog):
         await message.add_reaction(emoji)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
+    async def on_member_join(self, member):
+        print('guild id')
+        print(member.guild.id)
         config = BotConfig.BotConfig.getForGuild(member.guild.id)
         channel = member.guild.get_channel(config.welcomeChannel)
         await channel.send(f'Welcome to {member.guild.name}, {member.mention}!')
-        memberRole = member.guild.get_role(config.memberRoleId)
+        try:
+            memberRole = member.guild.get_role(config.memberRoleId)
+        except DoesNotExist:
+            # Just me being lazy... That is the id of member role in tit
+            memberRole = member.guild.get_role(607396881546477661)
+
         member.add_roles(memberRole)
 
     @commands.Cog.listener()
